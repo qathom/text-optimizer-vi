@@ -20,7 +20,7 @@ type Props = {
 }
 
 const GridContainer: FunctionComponent<Props> = () => {
-  const [content, setContent] = useState<string>('First sentence is cool! Second sentence is sad. :(');
+  const [content, setContent] = useState<string>('First sentence is cool! Second sentence is sad :(. The third is neutral.');
   const [metrics, setMetrics] = useState<Metrics|null>(null);
   const [lastEdit, setLastEdit] = useState<Date|null>(null);
   const [timeout, setEditTimeout] = useState<NodeJS.Timeout|null>(null);
