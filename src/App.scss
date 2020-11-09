@@ -40,3 +40,22 @@ html,
 body {
   background-color: $light;
 }
+
+.ck-editor__editable {
+  max-height: 400px;
+}
+
+
+.marker-green {
+  &::selection {
+    background-color: green;
+    color: #fff;
+  }
+}
+
+.marker-pink {
+  &::selection {
+    background-color: red;
+    color: #fff;
+  }
+}
