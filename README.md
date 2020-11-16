@@ -1,7 +1,9 @@
+
 # text-optimizer-vi
 
 > HES-SO project course for Information Visualisation
-
+## Prerequisites
+node.js > 10.0.0 && node.js < 15.0
 ## Installation
 
 ```
