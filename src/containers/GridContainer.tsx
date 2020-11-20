@@ -1,15 +1,24 @@
-import React, { FunctionComponent, ReactNode, useState } from 'react';
-import { Row, Col, Tabs, Tab, Table, Button, Alert, ProgressBar } from 'react-bootstrap';
-import { Metrics } from '../../types';
-import Editor from '../components/Editor';
-import TimelineChart from '../components/TimelineChart';
+import React, { FunctionComponent, ReactNode, useState } from "react";
+import {
+  Row,
+  Col,
+  Tabs,
+  Tab,
+  Table,
+  Button,
+  Alert,
+  ProgressBar,
+} from "react-bootstrap";
+import { Metrics } from "../../types";
+import Editor from "../components/Editor";
+import TimelineChart from "../components/TimelineChart";
 
 type Props = {
   children: ReactNode;
-}
+};
 
 const GridContainer: FunctionComponent<Props> = () => {
-  const [metrics, setMetrics] = useState<Metrics|null>(null);
+  const [metrics, setMetrics] = useState<Metrics | null>(null);
   const [highlightSequence, setHighlightSequence] = useState<number>(-1);
 
   const onUpdateMetrics = (newMetrics) => {
@@ -23,7 +32,10 @@ const GridContainer: FunctionComponent<Props> = () => {
   return (
     <Row className="bg-white p-3 mt-5">
       <Col>
-        <Editor onUpdateMetrics={onUpdateMetrics} highlight={highlightSequence} />
+        <Editor
+          onUpdateMetrics={onUpdateMetrics}
+          highlight={highlightSequence}
+        />
       </Col>
       <Col>
         <Tabs defaultActiveKey="general">
@@ -41,11 +53,21 @@ const GridContainer: FunctionComponent<Props> = () => {
                   <div>Words: {metrics.countWords}</div>
                   <div>Neutrality: {metrics.neutralityScore}</div>
 
-                  <Alert variant={metrics.neutralityScore >= -0.1 && metrics.neutralityScore <= 0.1 ? "success" : "danger"}>
+                  <Alert
+                    variant={
+                      metrics.neutralityScore >= -0.1 &&
+                      metrics.neutralityScore <= 0.1
+                        ? "success"
+                        : "danger"
+                    }
+                  >
                     Neutrality
                   </Alert>
 
-                 <TimelineChart data={metrics.sentiments} onLabelClicked={onHighlightLabel} />
+                  <TimelineChart
+                    data={metrics.sentiments}
+                    onLabelClicked={onHighlightLabel}
+                  />
                 </>
               )}
             </div>
@@ -53,7 +75,9 @@ const GridContainer: FunctionComponent<Props> = () => {
           <Tab eventKey="raw" title="Raw">
             {metrics && (
               <>
-                <Button variant="primary" className="float-right" size="sm">Download</Button>
+                <Button variant="primary" className="float-right" size="sm">
+                  Download
+                </Button>
                 <Table size="sm">
                   <thead>
                     <tr>
@@ -73,10 +97,21 @@ const GridContainer: FunctionComponent<Props> = () => {
               </>
             )}
           </Tab>
+          <Tab eventKey="raw" title="Languages">
+            {metrics && (
+              <>
+                <ProgressBar>
+                  <ProgressBar variant="success" now={35} key={1} />
+                  <ProgressBar variant="warning" now={20} key={2} />
+                  <ProgressBar variant="danger" now={10} key={3} />
+                </ProgressBar>
+              </>
+            )}
+          </Tab>
         </Tabs>
       </Col>
     </Row>
   );
-}
+};
 
 export default GridContainer;

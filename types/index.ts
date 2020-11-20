@@ -3,4 +3,5 @@ export type Metrics = {
   countCharacters: number,
   sentiments: number[],
   neutralityScore: number,
+  languages: Map<string, number>,
 };

@@ -63,6 +63,7 @@ const Editor: FunctionComponent<Props> = ({ onUpdateMetrics, highlight }) => {
       countCharacters: plainContent.length,
       sentiments,
       neutralityScore: sentiments.reduce((acc, sentiment) => acc + sentiment, 0) / sentiments.length,
+      languages: new Map().set('en',100) //TODO  alex
     })
   };
 
