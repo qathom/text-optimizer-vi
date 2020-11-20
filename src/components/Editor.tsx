@@ -58,12 +58,14 @@ const Editor: FunctionComponent<Props> = ({ onUpdateMetrics, highlight }) => {
     const wordTokens: string[] = wordTokenizer.tokenize(plainContent);
     const sentiments: number[] = sentenceTokens.map((s) => analyzer.getSentiment(wordTokenizer.tokenize(s)) || 0);
 
+    //sentenceTokens.
+
     setMetrics({
       countWords: wordTokens.length,
       countCharacters: plainContent.length,
       sentiments,
       neutralityScore: sentiments.reduce((acc, sentiment) => acc + sentiment, 0) / sentiments.length,
-      languages: new Map().set('en',100) //TODO  alex
+      languages: new Map().set('en',100), //TODO  alex
     })
   };
 

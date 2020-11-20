@@ -97,7 +97,7 @@ const GridContainer: FunctionComponent<Props> = () => {
               </>
             )}
           </Tab>
-          <Tab eventKey="raw" title="Languages">
+          <Tab eventKey="languages" title="Languages">
             {metrics && (
               <>
                 <ProgressBar>
