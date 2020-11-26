@@ -100,13 +100,13 @@ const GridContainer: FunctionComponent<Props> = () => {
           <Tab eventKey="languages" title="Languages">
             {metrics && (
               <>
-                <ProgressBar>
-                  <ProgressBar variant="success" now={35} key={1} />
-                  <ProgressBar variant="warning" now={20} key={2} />
-                  <ProgressBar variant="danger" now={10} key={3} />
+                 <ProgressBar>
+                  {Array.from(metrics.languages).map(([lang, percentage]) => (
+                      <ProgressBar variant="success" key={lang} now={percentage}  />
+                  ))}
                 </ProgressBar>
               </>
-            )}
+              )}
           </Tab>
         </Tabs>
       </Col>
