@@ -42,20 +42,63 @@ body {
 }
 
 .ck-editor__editable {
+  height: 400px;
   max-height: 400px;
 }
 
-
 .marker-green {
+  transition: background-color ease-in-out 300ms;
+  background-color: #a5d6a7 !important;
+
   &::selection {
-    background-color: green;
+    background-color: #66bb6a !important;
     color: #fff;
   }
 }
 
 .marker-pink {
+  transition: background-color ease-in-out 300ms;
+  background-color: #ef9a9a !important;
+
   &::selection {
-    background-color: red;
+    background-color: #ef5350 !important;
     color: #fff;
   }
+}
+
+.enable-color-blindness {
+  .marker-green {
+    background-color: #90caf9 !important;
+  
+    &::selection {
+      background-color: #42a5f5 !important;
+      color: #fff;
+    }
+  }
+  
+  .marker-pink {
+    background-color: #fff59d !important;
+  
+    &::selection {
+      background-color: #ffee58 !important;
+      color: #fff;
+    }
+  }
+}
+
+.col-separator {
+  border-right: 1px solid $gray-400;
+}
+
+// Override intro.js
+.introjs-hint-dot {
+  background-color: $blue;
+}
+
+.introjs-button {
+  color: $dark !important;
+}
+
+.main-container {
+  max-width: 1400px !important;
 }
