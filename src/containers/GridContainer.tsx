@@ -1,4 +1,4 @@
-import React, { FunctionComponent, ReactNode, useState } from "react";
+import React, { FunctionComponent, ReactNode, useState } from 'react';
 import {
   Row,
   Col,
@@ -6,20 +6,24 @@ import {
   Tab,
   Table,
   Button,
-  Alert,
   ProgressBar,
-} from "react-bootstrap";
-import { Metrics } from "../../types";
-import Editor from "../components/Editor";
-import TimelineChart from "../components/TimelineChart";
+  Form,
+} from 'react-bootstrap';
+import { v4 as uuidv4 } from 'uuid';
+import { Metrics } from '../../types';
+import Editor from '../components/Editor';
+import TimelineChart from '../components/TimelineChart';
+import { Hints } from 'intro.js-react';
 
 type Props = {
   children: ReactNode;
 };
 
-const progressBarTypes = ["success", "info", "warning", "danger"];
+const progressBarTypes = ['success', 'info', 'warning', 'danger'];
 
 const GridContainer: FunctionComponent<Props> = () => {
+  const [enableColorBlindness, setColorBlindness] = useState<boolean>(false);
+  const [showHints, setShowHints] = useState<boolean>(true);
   const [metrics, setMetrics] = useState<Metrics | null>(null);
   const [highlightSequence, setHighlightSequence] = useState<number>(-1);
 
@@ -31,95 +35,120 @@ const GridContainer: FunctionComponent<Props> = () => {
     setHighlightSequence(labelIndex);
   };
 
+  const hints = [
+    {
+      element: '.timeline-chart-container',
+      hint: 'Click on a blue and square point to focus the item in the editor.',
+      hintPosition: 'middle-middle',
+    },
+  ];
+
   return (
-    <Row className="bg-white p-3 mt-5">
-      <Col>
-        <Editor
-          onUpdateMetrics={onUpdateMetrics}
-          highlight={highlightSequence}
+    <>
+      <Hints
+        enabled={metrics !== null && showHints}
+        hints={hints}
+        onClose={() => setShowHints(false)}
+      />
+
+      <div className="d-flex align-items-center justify-content-between mt-5 mb-3">
+        <h3 className="text-muted">Text optimizer</h3>
+
+        <Form.Check
+          type="switch"
+          id="switch-accessibility"
+          onChange={() => setColorBlindness(!enableColorBlindness)}
+          value={enableColorBlindness ? 'checked' : ''}
+          label="Enable color blindness helper"
         />
-      </Col>
-      <Col>
-        <Tabs defaultActiveKey="general">
-          <Tab eventKey="general" title="General">
-            <div className="p-3">
-              {metrics && (
-                <>
-                  <ProgressBar>
-                    <ProgressBar variant="success" now={35} key={1} />
-                    <ProgressBar variant="warning" now={20} key={2} />
-                    <ProgressBar variant="danger" now={10} key={3} />
-                  </ProgressBar>
+      </div>
 
-                  <div>Chars: {metrics.countCharacters}</div>
-                  <div>Words: {metrics.countWords}</div>
-                  <div>Neutrality: {metrics.neutralityScore}</div>
 
-                  <Alert
-                    variant={
-                      metrics.neutralityScore >= -0.1 &&
-                      metrics.neutralityScore <= 0.1
-                        ? "success"
-                        : "danger"
-                    }
-                  >
-                    Neutrality
-                  </Alert>
-
-                  <TimelineChart
-                    data={metrics.sentiments}
-                    onLabelClicked={onHighlightLabel}
-                  />
-                </>
-              )}
-            </div>
-          </Tab>
-          <Tab eventKey="raw" title="Raw">
-            {metrics && (
-              <>
-                <Button variant="primary" className="float-right" size="sm">
-                  Download
-                </Button>
-                <Table size="sm">
-                  <thead>
-                    <tr>
-                      <th># sentence</th>
-                      <th>Score</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {metrics.sentiments.map((sentiment, i) => (
-                      <tr key={i}>
-                        <td>{i + 1}</td>
-                        <td>{sentiment}</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </Table>
-              </>
-            )}
-          </Tab>
-          <Tab eventKey="languages" title="Languages">
-            {metrics && (
-              <>
-                <ProgressBar>
-                  {Array.from(metrics.languages).map(
-                    ([lang, percentage], idx) => (
-                      <ProgressBar
-                        variant={progressBarTypes[idx]}
-                        key={lang}
-                        now={percentage * 100}
-                        title={lang}
+      <main className={enableColorBlindness ? 'enable-color-blindness' : ''}>
+        <Row className="bg-white p-3">
+          <Col>
+            <Editor
+              onUpdateMetrics={onUpdateMetrics}
+              highlight={highlightSequence}
+            />
+          </Col>
+          <Col>
+            <Tabs defaultActiveKey="general">
+              <Tab eventKey="general" title="General">
+                <div className="p-3">
+                  {metrics && (
+                    <>
+                      <TimelineChart
+                        data={metrics.sentiments}
+                        onLabelClicked={onHighlightLabel}
                       />
-                    )
+
+                      <Row className="text-center mt-5">
+                        <Col className="col-separator">
+                          <h3 className="text-muted">{metrics.countCharacters}</h3>
+                          Chars
+                        </Col>
+                        <Col className="col-separator">
+                          <h3 className="text-muted">{metrics.countWords}</h3>
+                          Words
+                        </Col>
+                        <Col>
+                          <h3 className="text-muted">{metrics.neutralityScore}</h3>
+                          Neutrality score
+                        </Col>
+                      </Row>
+                    </>
                   )}
-                </ProgressBar>
-              </>
-            )}
-          </Tab>
-        </Tabs>
-      </Col>
-    </Row>
+                </div>
+              </Tab>
+              <Tab eventKey="raw" title="Raw">
+                {metrics && (
+                  <>
+                    <Button variant="primary" className="float-right" size="sm">
+                      Download
+                    </Button>
+                    <Table size="sm">
+                      <thead>
+                        <tr>
+                          <th># sentence</th>
+                          <th>Score</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {metrics.sentiments.map((sentiment, i) => (
+                          <tr key={uuidv4()}>
+                            <td>{i + 1}</td>
+                            <td>{sentiment}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </Table>
+                  </>
+                )}
+              </Tab>
+              <Tab eventKey="languages" title="Languages">
+                {metrics && (
+                  <>
+                    <ProgressBar>
+                      {Array.from(metrics.languages).map(
+                        ([lang, percentage], idx) => (
+                          <ProgressBar
+                            variant={progressBarTypes[idx]}
+                            key={lang}
+                            now={percentage * 100}
+                            label={lang}
+                          />
+                        )
+                      )}
+                    </ProgressBar>
+                  </>
+                )}
+              </Tab>
+            </Tabs>
+          </Col>
+        </Row>
+      </main>
+    </>
   );
 };
 
