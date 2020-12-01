@@ -6,7 +6,7 @@ type Props = {
 
 const Default: FunctionComponent<Props> = ({ children }) => {
   return (
-    <div className="container">
+    <div className="container main-container">
       {children}
     </div>
   );
