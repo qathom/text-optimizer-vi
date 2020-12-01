@@ -12,7 +12,14 @@ const TimelineChart: FunctionComponent<Props> = ({ data, onLabelClicked }) => {
       label: 'Sentiment per sentence',
       fill: false,
       data: data,
-      borderColor: '#2980b9',
+      borderColor: '#333',
+      pointBackgroundColor: '#0d6efd',
+      pointBorderColor: '#0d6efd',
+      pointStyle: 'rect',
+      pointBorderWidth: 10,
+      pointHoverBorderWidth: 14,
+      pointHoverBackgroundColor: '#0d6efd',
+      pointHoverBorderColor: '#0d6efd',
     }],
     labels: data.map((s, i) => `${i + 1}`),
   };
@@ -28,7 +35,7 @@ const TimelineChart: FunctionComponent<Props> = ({ data, onLabelClicked }) => {
   };
 
   return (
-    <div style={{ height: '200px' }}>
+    <div className="timeline-chart-container" style={{ height: '200px' }}>
       <Line
         data={chartData}
         height={200}
