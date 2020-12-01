@@ -17,6 +17,8 @@ type Props = {
   children: ReactNode;
 };
 
+const progressBarTypes = ["success", "info", "warning", "danger"];
+
 const GridContainer: FunctionComponent<Props> = () => {
   const [metrics, setMetrics] = useState<Metrics | null>(null);
   const [highlightSequence, setHighlightSequence] = useState<number>(-1);
@@ -100,13 +102,20 @@ const GridContainer: FunctionComponent<Props> = () => {
           <Tab eventKey="languages" title="Languages">
             {metrics && (
               <>
-                 <ProgressBar>
-                  {Array.from(metrics.languages).map(([lang, percentage]) => (
-                      <ProgressBar variant="success" key={lang} now={percentage}  />
-                  ))}
+                <ProgressBar>
+                  {Array.from(metrics.languages).map(
+                    ([lang, percentage], idx) => (
+                      <ProgressBar
+                        variant={progressBarTypes[idx]}
+                        key={lang}
+                        now={percentage * 100}
+                        title={lang}
+                      />
+                    )
+                  )}
                 </ProgressBar>
               </>
-              )}
+            )}
           </Tab>
         </Tabs>
       </Col>

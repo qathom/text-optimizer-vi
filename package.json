@@ -24,6 +24,7 @@
     "@types/react-dom": "^16.9.8",
     "bootstrap": "^4.5.3",
     "chart.js": "^2.9.4",
+    "languagedetect": "^2.0.0",
     "natural": "^2.1.5",
     "raw-loader": "^3.1.0",
     "react": "^17.0.1",

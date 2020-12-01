@@ -1,37 +1,41 @@
-import React, { FunctionComponent, useEffect, useState } from 'react';
-import { Form } from 'react-bootstrap';
-import { CKEditor } from '@ckeditor/ckeditor5-react';
-import ClassicEditor from '@ckeditor/ckeditor5-editor-classic/src/classiceditor';
-import Essentials from '@ckeditor/ckeditor5-essentials/src/essentials';
-import Bold from '@ckeditor/ckeditor5-basic-styles/src/bold';
-import Italic from '@ckeditor/ckeditor5-basic-styles/src/italic';
-import Paragraph from '@ckeditor/ckeditor5-paragraph/src/paragraph';
-import Heading from '@ckeditor/ckeditor5-heading/src/heading';
-import Highlight from '@ckeditor/ckeditor5-highlight/src/highlight';
-import { Metrics } from '../../types';
+import React, { FunctionComponent, useEffect, useState } from "react";
+import { Form } from "react-bootstrap";
+import { CKEditor } from "@ckeditor/ckeditor5-react";
+import ClassicEditor from "@ckeditor/ckeditor5-editor-classic/src/classiceditor";
+import Essentials from "@ckeditor/ckeditor5-essentials/src/essentials";
+import Bold from "@ckeditor/ckeditor5-basic-styles/src/bold";
+import Italic from "@ckeditor/ckeditor5-basic-styles/src/italic";
+import Paragraph from "@ckeditor/ckeditor5-paragraph/src/paragraph";
+import Heading from "@ckeditor/ckeditor5-heading/src/heading";
+import Highlight from "@ckeditor/ckeditor5-highlight/src/highlight";
+import { Metrics } from "../../types";
 
-const natural = require('natural');
-
+// naturalJs
+const natural = require("natural");
 const Analyzer = natural.SentimentAnalyzer;
 const stemmer = natural.PorterStemmer;
 const wordTokenizer = new natural.WordTokenizer();
-const analyzer = new Analyzer('English', stemmer, 'afinn');
+const analyzer = new Analyzer("English", stemmer, "afinn");
+
+// languagedetect
+const LanguageDetect = require("languagedetect");
+const lngDetector = new LanguageDetect();
 
 type Props = {
-  onUpdateMetrics: (metrics: Metrics) => void,
-  highlight: number,
+  onUpdateMetrics: (metrics: Metrics) => void;
+  highlight: number;
 };
 
 const Editor: FunctionComponent<Props> = ({ onUpdateMetrics, highlight }) => {
   const [editor, setEditor] = useState<any>(null);
   const [selectNode, setSelectNode] = useState<number>(highlight);
-  const [content, setContent] = useState<string>('');
-  const [metrics, setMetrics] = useState<Metrics|null>(null);
-  const [timeout, setEditTimeout] = useState<NodeJS.Timeout|null>(null);
-  const [lastEdit, setLastEdit] = useState<Date|null>(null);
+  const [content, setContent] = useState<string>("");
+  const [metrics, setMetrics] = useState<Metrics | null>(null);
+  const [timeout, setEditTimeout] = useState<NodeJS.Timeout | null>(null);
+  const [lastEdit, setLastEdit] = useState<Date | null>(null);
 
   const getPlainText = (formattedText: string) => {
-    const div: HTMLElement = document.createElement('div');
+    const div: HTMLElement = document.createElement("div");
     div.innerHTML = formattedText;
     return div.innerText;
   };
@@ -39,11 +43,15 @@ const Editor: FunctionComponent<Props> = ({ onUpdateMetrics, highlight }) => {
   const extractSentences = (): string[] => {
     const sentences: string[] = [];
     const matches = [...content.matchAll(/>(.*?)</g)];
-    const exclude: string[] = ['&nbsp;'];
+    const exclude: string[] = ["&nbsp;"];
 
     matches.forEach((match) => {
       const sentence = match[1];
-      if (typeof sentence === 'string' && sentence.length > 0 && !exclude.includes(sentence)) {
+      if (
+        typeof sentence === "string" &&
+        sentence.length > 0 &&
+        !exclude.includes(sentence)
+      ) {
         sentences.push(sentence);
       }
     });
@@ -56,7 +64,26 @@ const Editor: FunctionComponent<Props> = ({ onUpdateMetrics, highlight }) => {
     const plainContent = getPlainText(content);
 
     const wordTokens: string[] = wordTokenizer.tokenize(plainContent);
-    const sentiments: number[] = sentenceTokens.map((s) => analyzer.getSentiment(wordTokenizer.tokenize(s)) || 0);
+    const sentiments: number[] = sentenceTokens.map(
+      (s) => analyzer.getSentiment(wordTokenizer.tokenize(s)) || 0
+    );
+    var languages: Map<string, number> = lngDetector.detect(content, 4); // we take only the first 4 languages
+    var missingNumber = 1;
+    languages.forEach((value) => {
+      //console.log("value: " + value[1]);
+
+      missingNumber = missingNumber - value[1];
+    });
+    //console.log("missingNumber:" + missingNumber);
+    if (missingNumber > 0) {
+      //console.log("missingNumber:" + missingNumber);
+      languages[0][1] += missingNumber;
+    } else {
+      // when missingNumber is negativ
+      languages[3][1] += missingNumber;
+    }
+    //console.log("languages:");
+    //console.log(languages);
 
     //sentenceTokens.
 
@@ -64,9 +91,11 @@ const Editor: FunctionComponent<Props> = ({ onUpdateMetrics, highlight }) => {
       countWords: wordTokens.length,
       countCharacters: plainContent.length,
       sentiments,
-      neutralityScore: sentiments.reduce((acc, sentiment) => acc + sentiment, 0) / sentiments.length,
-      languages: new Map().set('en',90).set('fr', 10), //TODO  alex
-    })
+      neutralityScore:
+        sentiments.reduce((acc, sentiment) => acc + sentiment, 0) /
+        sentiments.length,
+      languages: languages, //TODO  alex
+    });
   };
 
   useEffect(() => {
@@ -85,14 +114,14 @@ const Editor: FunctionComponent<Props> = ({ onUpdateMetrics, highlight }) => {
         // onUpdate(getPlainText(content));
         computeMetrics();
       }
-      
+
       if (timeout) {
         clearTimeout(timeout);
       }
       setEditTimeout(null);
     }, 1000);
 
-    setEditTimeout(newTimeout)
+    setEditTimeout(newTimeout);
 
     setLastEdit(new Date());
   }, [content]);
@@ -106,7 +135,7 @@ const Editor: FunctionComponent<Props> = ({ onUpdateMetrics, highlight }) => {
   }, [metrics]);
 
   const setNodeSelection = () => {
-    console.log('SET NODE SELECTION');
+    console.log("SET NODE SELECTION");
 
     // Triggers model change (https://ckeditor.com/docs/ckeditor5/latest/framework/guides/deep-dive/ui/focus-tracking.html)
     editor?.editing?.view?.focus();
@@ -114,7 +143,7 @@ const Editor: FunctionComponent<Props> = ({ onUpdateMetrics, highlight }) => {
     editor.model.change((writer) => {
       const root = editor.model.document.getRoot();
       const start = writer.createPositionAt(root.getChild(highlight), 0);
-      const end = writer.createPositionAt(root.getChild(highlight), 'end');
+      const end = writer.createPositionAt(root.getChild(highlight), "end");
       writer.setSelection(writer.createRange(start, end));
 
       setSelectNode(highlight);
@@ -137,28 +166,27 @@ const Editor: FunctionComponent<Props> = ({ onUpdateMetrics, highlight }) => {
 
   const highlightNode = (editor, writer, node, color: string) => {
     const start = writer.createPositionAt(node, 0);
-    const end = writer.createPositionAt(node, 'end');
+    const end = writer.createPositionAt(node, "end");
 
     writer.setSelection(writer.createRange(start, end));
 
-    editor.execute('highlight', {
+    editor.execute("highlight", {
       value: `${color}Marker`,
     });
   };
 
   const removeHighlight = (editor, writer, node) => {
     const start = writer.createPositionAt(node, 0);
-    const end = writer.createPositionAt(node, 'end');
+    const end = writer.createPositionAt(node, "end");
 
     writer.setSelection(writer.createRange(start, end));
 
-    editor.execute('highlight');
+    editor.execute("highlight");
   };
 
   const onChange = (_event, editor) => {
     editor.model.change((writer) => {
-
-      console.log('ON CHANGE');
+      console.log("ON CHANGE");
 
       const currentPosition = editor.model.document.selection.getFirstPosition();
       const node = findActiveNode(editor, currentPosition);
@@ -169,7 +197,7 @@ const Editor: FunctionComponent<Props> = ({ onUpdateMetrics, highlight }) => {
         return;
       }
 
-      const res = analyzer.getSentiment(wordTokenizer.tokenize(text))
+      const res = analyzer.getSentiment(wordTokenizer.tokenize(text));
 
       const isNegative = res < -0.2;
       const isPositive = res > 0.2;
@@ -178,15 +206,14 @@ const Editor: FunctionComponent<Props> = ({ onUpdateMetrics, highlight }) => {
       // console.log(textNode, '=>', res);
 
       if (isNegative || isPositive) {
-        highlightNode(editor, writer, node, isPositive ? 'green' : 'pink');
+        highlightNode(editor, writer, node, isPositive ? "green" : "pink");
       } else {
         removeHighlight(editor, writer, node);
       }
 
       // Re-apply current cursor position
-      writer.setSelection(currentPosition, 'end');
+      writer.setSelection(currentPosition, "end");
     });
-
 
     const data = editor.getData();
     //console.log(data);
@@ -200,7 +227,7 @@ const Editor: FunctionComponent<Props> = ({ onUpdateMetrics, highlight }) => {
         onReady={(ed) => setEditor(ed)}
         config={{
           plugins: [Essentials, Bold, Italic, Paragraph, Heading, Highlight],
-          toolbar: ['heading', '|', 'bold', 'italic']
+          toolbar: ["heading", "|", "bold", "italic"],
         }}
         data={content}
         onChange={onChange}
@@ -213,6 +240,6 @@ const Editor: FunctionComponent<Props> = ({ onUpdateMetrics, highlight }) => {
       )}
     </Form.Group>
   );
-}
+};
 
 export default Editor;
