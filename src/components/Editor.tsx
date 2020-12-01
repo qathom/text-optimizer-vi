@@ -228,6 +228,7 @@ const Editor: FunctionComponent<Props> = ({ onUpdateMetrics, highlight }) => {
         config={{
           plugins: [Essentials, Bold, Italic, Paragraph, Heading, Highlight],
           toolbar: ["heading", "|", "bold", "italic"],
+          placeholder: 'Write your text',
         }}
         data={content}
         onChange={onChange}
