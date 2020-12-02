@@ -8,6 +8,7 @@ import Italic from "@ckeditor/ckeditor5-basic-styles/src/italic";
 import Paragraph from "@ckeditor/ckeditor5-paragraph/src/paragraph";
 import Heading from "@ckeditor/ckeditor5-heading/src/heading";
 import Highlight from "@ckeditor/ckeditor5-highlight/src/highlight";
+import { scrollViewportToShowTarget } from "@ckeditor/ckeditor5-utils/src/dom/scroll";
 import { Metrics } from "../../types";
 
 // naturalJs
@@ -150,11 +151,21 @@ const Editor: FunctionComponent<Props> = ({ onUpdateMetrics, highlight }) => {
 
     editor.model.change((writer) => {
       const root = editor.model.document.getRoot();
-      const start = writer.createPositionAt(root.getChild(highlight), 0);
-      const end = writer.createPositionAt(root.getChild(highlight), "end");
-      writer.setSelection(writer.createRange(start, end));
+      const child = root.getChild(highlight);
+      const start = writer.createPositionAt(child, 0);
+      const end = writer.createPositionAt(child, "end");
+      const range = writer.createRange(start, end);
+
+      writer.setSelection(range);
 
       setSelectNode(highlight);
+
+      const viewRange = editor.editing.mapper.toViewRange(range);
+
+      scrollViewportToShowTarget({
+        target: editor.editing.view.domConverter.viewRangeToDom(viewRange),
+        viewportOffset: 0,
+      });
     });
   };
 
