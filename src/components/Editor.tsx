@@ -68,13 +68,32 @@ const Editor: FunctionComponent<Props> = ({ onUpdateMetrics, highlight }) => {
     const sentiments: number[] = sentenceTokens.map(
       (s) => analyzer.getSentiment(wordTokenizer.tokenize(s)) || 0
     );
-    var languages: Map<string, number> = franc.all(content, {
-      only: ["fra", "deu", "eng", "ita"],
-    }); // we take only the first 4 languages
-    //console.log("languages:");
-    //console.log(languages);
+    var languages: Map<string, number> = new Map([
+      ["eng", 0],
+      ["deu", 0],
+      ["fra", 0],
+      ["ita", 0],
+    ]);
+    console.log(languages);
+    let analyzedWords = sentenceTokens.length;
+    sentenceTokens.forEach((word) => {
+      console.log(word);
+      const lang = franc(word, {minLength: 5, only: ['fra', 'eng', 'deu', 'ita']});
+      console.log("lang:" + lang);
 
-    //sentenceTokens.
+      if (languages.has(lang)) {
+        const currentValue = languages.get(lang) ?? 0;
+        languages.set(lang, currentValue + 1);
+      }
+      else{ // undefined returned
+        analyzedWords--;
+      }
+    });
+    console.log(languages);
+
+    for (let [lang, nb] of languages) {
+      nb = nb / analyzedWords;
+    }
 
     setMetrics({
       countWords: wordTokens.length,

@@ -101,6 +101,25 @@ const GridContainer: FunctionComponent<Props> = () => {
                   )}
                 </div>
               </Tab>
+
+              <Tab eventKey="languages" title="Languages">
+                {metrics && (
+                  <>
+                    <ProgressBar>
+                      {Array.from(metrics.languages).map(
+                        ([lang, percentage], idx) => (
+                          <ProgressBar
+                            variant={progressBarTypes[idx]}
+                            key={lang}
+                            now={percentage * 100}
+                            label={lang}
+                          />
+                        )
+                      )}
+                    </ProgressBar>
+                  </>
+                )}
+              </Tab>
               <Tab eventKey="raw" title="Raw">
                 {metrics && (
                   <>
@@ -123,24 +142,6 @@ const GridContainer: FunctionComponent<Props> = () => {
                         ))}
                       </tbody>
                     </Table>
-                  </>
-                )}
-              </Tab>
-              <Tab eventKey="languages" title="Languages">
-                {metrics && (
-                  <>
-                    <ProgressBar>
-                      {Array.from(metrics.languages).map(
-                        ([lang, percentage], idx) => (
-                          <ProgressBar
-                            variant={progressBarTypes[idx]}
-                            key={lang}
-                            now={percentage * 100}
-                            label={lang}
-                          />
-                        )
-                      )}
-                    </ProgressBar>
                   </>
                 )}
               </Tab>
