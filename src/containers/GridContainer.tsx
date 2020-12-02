@@ -14,6 +14,9 @@ import { Metrics } from '../../types';
 import Editor from '../components/Editor';
 import TimelineChart from '../components/TimelineChart';
 import { Hints } from 'intro.js-react';
+import TimelineModal from '../components/TimelineModal';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faExpandAlt } from '@fortawesome/free-solid-svg-icons'
 
 type Props = {
   children: ReactNode;
@@ -22,6 +25,7 @@ type Props = {
 const progressBarTypes = ['success', 'info', 'warning', 'danger'];
 
 const GridContainer: FunctionComponent<Props> = () => {
+  const [showTimelineModal, setShowTimelineModal] = useState<boolean>(false);
   const [enableColorBlindness, setColorBlindness] = useState<boolean>(false);
   const [showHints, setShowHints] = useState<boolean>(true);
   const [metrics, setMetrics] = useState<Metrics | null>(null);
@@ -45,6 +49,13 @@ const GridContainer: FunctionComponent<Props> = () => {
 
   return (
     <>
+      {metrics && (
+        <TimelineModal show={showTimelineModal} handleClose={() => setShowTimelineModal(false)} chartData={{
+          data: metrics.sentiments,
+          onLabelClicked: onHighlightLabel,
+        }} />
+      )}
+
       <Hints
         enabled={metrics !== null && showHints}
         hints={hints}
@@ -63,7 +74,6 @@ const GridContainer: FunctionComponent<Props> = () => {
         />
       </div>
 
-
       <main className={enableColorBlindness ? 'enable-color-blindness' : ''}>
         <Row className="bg-white p-3">
           <Col>
@@ -78,6 +88,11 @@ const GridContainer: FunctionComponent<Props> = () => {
                 <div className="p-3">
                   {metrics && (
                     <>
+                      <Button className="float-right" variant="link" size="sm" onClick={() => setShowTimelineModal(true)}>
+                        Increase chart size
+                        <FontAwesomeIcon className="ml-1" icon={faExpandAlt} />
+                      </Button>
+
                       <TimelineChart
                         data={metrics.sentiments}
                         onLabelClicked={onHighlightLabel}
