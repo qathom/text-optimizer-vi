@@ -18,8 +18,9 @@ const wordTokenizer = new natural.WordTokenizer();
 const analyzer = new Analyzer("English", stemmer, "afinn");
 
 // languagedetect
-const LanguageDetect = require("languagedetect");
-const lngDetector = new LanguageDetect();
+//const LanguageDetect = require("languagedetect");
+//const lngDetector = new LanguageDetect();
+var franc = require("franc");
 
 type Props = {
   onUpdateMetrics: (metrics: Metrics) => void;
@@ -67,21 +68,9 @@ const Editor: FunctionComponent<Props> = ({ onUpdateMetrics, highlight }) => {
     const sentiments: number[] = sentenceTokens.map(
       (s) => analyzer.getSentiment(wordTokenizer.tokenize(s)) || 0
     );
-    var languages: Map<string, number> = lngDetector.detect(content, 4); // we take only the first 4 languages
-    var missingNumber = 1;
-    languages.forEach((value) => {
-      //console.log("value: " + value[1]);
-
-      missingNumber = missingNumber - value[1];
-    });
-    //console.log("missingNumber:" + missingNumber);
-    if (missingNumber > 0) {
-      //console.log("missingNumber:" + missingNumber);
-      languages[0][1] += missingNumber;
-    } else {
-      // when missingNumber is negativ
-      languages[3][1] += missingNumber;
-    }
+    var languages: Map<string, number> = franc.all(content, {
+      only: ["fra", "deu", "eng", "ita"],
+    }); // we take only the first 4 languages
     //console.log("languages:");
     //console.log(languages);
 
@@ -228,7 +217,7 @@ const Editor: FunctionComponent<Props> = ({ onUpdateMetrics, highlight }) => {
         config={{
           plugins: [Essentials, Bold, Italic, Paragraph, Heading, Highlight],
           toolbar: ["heading", "|", "bold", "italic"],
-          placeholder: 'Write your text',
+          placeholder: "Write your text",
         }}
         data={content}
         onChange={onChange}

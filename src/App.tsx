@@ -9,7 +9,7 @@ import './App.scss';
 function App() {
   return (
     <DefaultLayout>
-      <GridContainer>
+    <GridContainer>
         
       </GridContainer>
     </DefaultLayout>

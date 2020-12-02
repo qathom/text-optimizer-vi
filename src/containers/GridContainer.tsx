@@ -93,7 +93,7 @@ const GridContainer: FunctionComponent<Props> = () => {
                           Words
                         </Col>
                         <Col>
-                          <h3 className="text-muted">{metrics.neutralityScore}</h3>
+                          <h3 className="text-muted">{metrics.neutralityScore.toLocaleString(undefined, {maximumFractionDigits:2})}</h3>
                           Neutrality score
                         </Col>
                       </Row>
