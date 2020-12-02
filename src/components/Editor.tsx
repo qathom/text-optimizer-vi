@@ -194,8 +194,6 @@ const Editor: FunctionComponent<Props> = ({ onUpdateMetrics, highlight }) => {
 
   const onChange = (_event, editor) => {
     editor.model.change((writer) => {
-      console.log("ON CHANGE");
-
       const currentPosition = editor.model.document.selection.getFirstPosition();
       const node = findActiveNode(editor, currentPosition);
       const textNode = node?.getChildren()?.next()?.value;
