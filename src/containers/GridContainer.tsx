@@ -17,6 +17,7 @@ import { Hints } from 'intro.js-react';
 import TimelineModal from '../components/TimelineModal';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faExpandAlt } from '@fortawesome/free-solid-svg-icons'
+import LanguagesBarChart from '../components/LanguagesBarChart';
 
 type Props = {
   children: ReactNode;
@@ -124,20 +125,7 @@ const GridContainer: FunctionComponent<Props> = () => {
 
               <Tab eventKey="languages" title="Languages">
                 {metrics && (
-                  <>
-                    <ProgressBar>
-                      {Array.from(metrics.languages).map(
-                        ([lang, percentage], idx) => (
-                          <ProgressBar
-                            variant={progressBarTypes[idx]}
-                            key={lang}
-                            now={percentage * 100}
-                            label={lang}
-                          />
-                        )
-                      )}
-                    </ProgressBar>
-                  </>
+                    <LanguagesBarChart data={metrics.languages} />
                 )}
               </Tab>
               <Tab eventKey="raw" title="Raw">
