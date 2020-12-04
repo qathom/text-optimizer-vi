@@ -103,12 +103,7 @@ const GridContainer: FunctionComponent<Props> = () => {
                         data={metrics.sentiments}
                         onLabelClicked={onHighlightLabel}
                       />
-
                       <Row className="text-center mt-5">
-                        <Col className="col-separator">
-                          <h3 className="text-muted">{metrics.countCharacters}</h3>
-                          Chars
-                        </Col>
                         <Col className="col-separator">
                           <h3 className="text-muted">{metrics.countWords}</h3>
                           Words
@@ -116,6 +111,10 @@ const GridContainer: FunctionComponent<Props> = () => {
                         <Col>
                           <h3 className="text-muted">{metrics.neutralityScore.toLocaleString(undefined, {maximumFractionDigits:2})}</h3>
                           Neutrality score
+                        </Col>
+                        <Col className="col-separator">
+                          <h3 className="text-muted">{metrics.varianceScore.toLocaleString(undefined, {maximumFractionDigits:2})}</h3>
+                          Neutrality variance
                         </Col>
                       </Row>
                     </>

@@ -103,10 +103,12 @@ const Editor: FunctionComponent<Props> = ({ onUpdateMetrics, highlight }) => {
       }
     });
 
-    console.log('languages!!! ' + languages);
+    var mean = sentiments.reduce( ( firstSentiment, secondsentiment ) => firstSentiment+ secondsentiment, 0 ) / sentiments.length;
+    var meanTot = sentiments.map((sentiment) => Math.pow(sentiment - mean, 2));
+    var variance = meanTot.reduce((val, val2) => val+val2,0) / sentiments.length;
     setMetrics({
       countWords: wordTokens.length,
-      countCharacters: plainContent.length,
+      varianceScore: variance,
       sentiments,
       neutralityScore:
         sentiments.reduce((acc, sentiment) => acc + sentiment, 0) /
