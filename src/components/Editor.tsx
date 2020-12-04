@@ -18,9 +18,6 @@ const stemmer = natural.PorterStemmer;
 const wordTokenizer = new natural.WordTokenizer();
 const analyzer = new Analyzer("English", stemmer, "afinn");
 
-// languagedetect
-//const LanguageDetect = require("languagedetect");
-//const lngDetector = new LanguageDetect();
 var franc = require("franc");
 
 type Props = {
@@ -42,7 +39,7 @@ const Editor: FunctionComponent<Props> = ({ onUpdateMetrics, highlight }) => {
     return div.innerText;
   };
 
-  const extractSentences = (): string[] => {
+  const extractParagraphs = (): string[] => {
     const sentences: string[] = [];
     const matches = [...content.matchAll(/>(.*?)</g)];
     const exclude: string[] = ["&nbsp;"];
@@ -62,11 +59,11 @@ const Editor: FunctionComponent<Props> = ({ onUpdateMetrics, highlight }) => {
   };
 
   const computeMetrics = () => {
-    const sentenceTokens: string[] = extractSentences();
+    const paragraphTokens: string[] = extractParagraphs();
     const plainContent = getPlainText(content);
 
     const wordTokens: string[] = wordTokenizer.tokenize(plainContent);
-    const sentiments: number[] = sentenceTokens.map(
+    const sentiments: number[] = paragraphTokens.map(
       (s) => analyzer.getSentiment(wordTokenizer.tokenize(s)) || 0
     );
     var languages: Map<string, number> = new Map([
@@ -75,11 +72,14 @@ const Editor: FunctionComponent<Props> = ({ onUpdateMetrics, highlight }) => {
       ["fra", 0],
       ["ita", 0],
     ]);
+
     console.log(languages);
-    let analyzedWords = sentenceTokens.length;
-    sentenceTokens.forEach((word) => {
+
+    let analyzedWords = paragraphTokens.length;
+
+    paragraphTokens.forEach((word) => {
       console.log(word);
-      const lang = franc(word, {minLength: 5, only: ['fra', 'eng', 'deu', 'ita']});
+      const lang = franc(word, { minLength: 5, only: ['fra', 'eng', 'deu', 'ita']});
       console.log("lang:" + lang);
 
       if (languages.has(lang)) {
