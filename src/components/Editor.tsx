@@ -1,5 +1,6 @@
 import React, { FunctionComponent, useEffect, useState } from "react";
 import { Form } from "react-bootstrap";
+import natural from 'natural';
 import { CKEditor } from "@ckeditor/ckeditor5-react";
 import ClassicEditor from "@ckeditor/ckeditor5-editor-classic/src/classiceditor";
 import Essentials from "@ckeditor/ckeditor5-essentials/src/essentials";
@@ -10,16 +11,13 @@ import Heading from "@ckeditor/ckeditor5-heading/src/heading";
 import Highlight from "@ckeditor/ckeditor5-highlight/src/highlight";
 import { scrollViewportToShowTarget } from "@ckeditor/ckeditor5-utils/src/dom/scroll";
 import { Metrics } from "../../types";
+import franc from 'franc';
 
-// naturalJs
-const natural = require("natural");
 const Analyzer = natural.SentimentAnalyzer;
 const stemmer = natural.PorterStemmer;
 const wordTokenizer = new natural.WordTokenizer();
-const sentenceTokenizer = new natural.SentenceTokenizer();
+const sentenceTokenizer = new natural.TreebankWordTokenizer();
 const analyzer = new Analyzer("English", stemmer, "afinn");
-
-var franc = require("franc");
 
 type Props = {
   onUpdateMetrics: (metrics: Metrics) => void;
