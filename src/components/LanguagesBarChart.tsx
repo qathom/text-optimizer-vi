@@ -32,7 +32,8 @@ function getChartData(data: Map<string, number[]>) {
 
   return {
     datasets,
-    labels: [...data.values()].map((_value, i) => `Paragraphe ${i}`),
+    //labels: [...data.values()].map((_value, i) => `Paragraphe ${i}`),
+    labels: (data.get('eng')??[]).map((value, idx) => `Paragraphe ${idx}`)
   };
 }
 

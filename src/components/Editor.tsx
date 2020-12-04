@@ -74,16 +74,16 @@ const Editor: FunctionComponent<Props> = ({ onUpdateMetrics, highlight }) => {
       ["ita", []],
     ]);
     console.log(languages);
-    let analyzedWords = paragraphTokens.length;
     paragraphTokens.forEach((paragraph) => {
       languages.get("eng")?.push(0);
       languages.get("deu")?.push(0);
       languages.get("fra")?.push(0);
       languages.get("ita")?.push(0);
-      console.log(paragraph);
       //sentenceTokens.For each sentence
       const sentences: string[] = sentenceTokenizer.tokenize(paragraph);
+      let consirederSentencesNumber = sentences.length;
       sentences.forEach((sentence) => {
+      console.log(sentence);
         const lang = franc(sentence, {
           minLength: 5,
           only: ["fra", "eng", "deu", "ita"],
@@ -95,15 +95,15 @@ const Editor: FunctionComponent<Props> = ({ onUpdateMetrics, highlight }) => {
           currentArray[currentArray.length-1 ?? -1] += 1;
         } else {
           // undefined returned
-          analyzedWords--;
+          consirederSentencesNumber--;
         }
       });
       for (let [lang, nb] of languages) {
-        nb[nb.length-1] = nb[nb.length-1] / analyzedWords;
+        nb[nb.length-1] = nb[nb.length-1] / consirederSentencesNumber;
       }
     });
 
-
+    console.log('languages!!! ' + languages);
     setMetrics({
       countWords: wordTokens.length,
       countCharacters: plainContent.length,
