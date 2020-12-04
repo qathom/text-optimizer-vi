@@ -28,6 +28,7 @@
     "@types/react-dom": "^16.9.8",
     "bootstrap": "^4.5.3",
     "chart.js": "^2.9.4",
+    "chartjs-plugin-zoom": "^0.7.7",
     "franc": "^5.0.0",
     "intro.js": "^3.1.0",
     "intro.js-react": "^0.2.0",
