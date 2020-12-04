@@ -54,8 +54,9 @@ const LanguagesBarChart: FunctionComponent<Props> = ({ data }) => {
               display: true,
               ticks: {
                 // min: -1,
-                // max: 1,
-              },
+                //  max: 1,
+                  maxTicksLimit: 5,
+               },
               scaleLabel: {
                 display: true,
                 labelString: 'Score du sentiment',
