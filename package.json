@@ -6,7 +6,8 @@
     "start": "react-app-rewired start",
     "build": "react-app-rewired build",
     "test": "react-app-rewired test",
-    "eject": "react-app-rewired eject"
+    "eject": "react-app-rewired eject",
+    "release": "ts-node --compiler-options '{ \"module\": \"commonjs\" }' ./bin/release.ts && git merge origin/master"
   },
   "dependencies": {
     "@babel/plugin-transform-react-jsx": "^7.12.5",
