@@ -42,6 +42,11 @@ const GridContainer: FunctionComponent<Props> = () => {
   const hints = [
     {
       element: '.timeline-chart-container',
+      hint: 'The sentiment score is between -1 (negative) and 1 (positive). The value 0 means a perfect neutrality score.',
+      hintPosition: 'top-left',
+    },
+    {
+      element: '.timeline-chart-container',
       hint: 'Click on a blue and square point to focus the item in the editor.',
       hintPosition: 'middle-middle',
     },
