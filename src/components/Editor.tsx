@@ -16,6 +16,7 @@ const natural = require("natural");
 const Analyzer = natural.SentimentAnalyzer;
 const stemmer = natural.PorterStemmer;
 const wordTokenizer = new natural.WordTokenizer();
+const sentenceTokenizer = new natural.SentenceTokenizer();
 const analyzer = new Analyzer("English", stemmer, "afinn");
 
 // languagedetect
@@ -42,8 +43,8 @@ const Editor: FunctionComponent<Props> = ({ onUpdateMetrics, highlight }) => {
     return div.innerText;
   };
 
-  const extractSentences = (): string[] => {
-    const sentences: string[] = [];
+  const extractParagraphs = (): string[] => {
+    const paragraphs: string[] = [];
     const matches = [...content.matchAll(/>(.*?)</g)];
     const exclude: string[] = ["&nbsp;"];
 
@@ -54,47 +55,57 @@ const Editor: FunctionComponent<Props> = ({ onUpdateMetrics, highlight }) => {
         sentence.length > 0 &&
         !exclude.includes(sentence)
       ) {
-        sentences.push(sentence);
+        paragraphs.push(sentence);
       }
     });
 
-    return sentences;
+    return paragraphs;
   };
 
   const computeMetrics = () => {
-    const sentenceTokens: string[] = extractSentences();
+    const paragraphTokens: string[] = extractParagraphs();
     const plainContent = getPlainText(content);
 
     const wordTokens: string[] = wordTokenizer.tokenize(plainContent);
-    const sentiments: number[] = sentenceTokens.map(
+    const sentiments: number[] = paragraphTokens.map(
       (s) => analyzer.getSentiment(wordTokenizer.tokenize(s)) || 0
     );
-    var languages: Map<string, number> = new Map([
-      ["eng", 0],
-      ["deu", 0],
-      ["fra", 0],
-      ["ita", 0],
+    var languages: Map<string, number[]> = new Map([
+      ["eng", []],
+      ["deu", []],
+      ["fra", []],
+      ["ita", []],
     ]);
     console.log(languages);
-    let analyzedWords = sentenceTokens.length;
-    sentenceTokens.forEach((word) => {
-      console.log(word);
-      const lang = franc(word, {minLength: 5, only: ['fra', 'eng', 'deu', 'ita']});
-      console.log("lang:" + lang);
+    let analyzedWords = paragraphTokens.length;
+    paragraphTokens.forEach((paragraph) => {
+      languages.get("eng")?.push(0);
+      languages.get("deu")?.push(0);
+      languages.get("fra")?.push(0);
+      languages.get("ita")?.push(0);
+      console.log(paragraph);
+      //sentenceTokens.For each sentence
+      const sentences: string[] = sentenceTokenizer.tokenize(paragraph);
+      sentences.forEach((sentence) => {
+        const lang = franc(sentence, {
+          minLength: 5,
+          only: ["fra", "eng", "deu", "ita"],
+        });
+        console.log("lang:" + lang);
 
-      if (languages.has(lang)) {
-        const currentValue = languages.get(lang) ?? 0;
-        languages.set(lang, currentValue + 1);
-      }
-      else{ // undefined returned
-        analyzedWords--;
+        if (languages.has(lang)) {
+          const currentArray = languages.get(lang) ?? [];
+          currentArray[currentArray.length-1 ?? -1] += 1;
+        } else {
+          // undefined returned
+          analyzedWords--;
+        }
+      });
+      for (let [lang, nb] of languages) {
+        nb[nb.length-1] = nb[nb.length-1] / analyzedWords;
       }
     });
-    console.log(languages);
 
-    for (let [lang, nb] of languages) {
-      nb = nb / analyzedWords;
-    }
 
     setMetrics({
       countWords: wordTokens.length,
