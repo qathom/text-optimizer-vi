@@ -1,15 +1,12 @@
-import React, { FunctionComponent, ReactNode, useState } from 'react';
+import React, { FunctionComponent, ReactNode, useEffect, useState } from 'react';
 import {
   Row,
   Col,
   Tabs,
   Tab,
-  Table,
   Button,
-  ProgressBar,
   Form,
 } from 'react-bootstrap';
-import { v4 as uuidv4 } from 'uuid';
 import { Metrics } from '../../types';
 import Editor from '../components/Editor';
 import TimelineChart from '../components/TimelineChart';
@@ -18,17 +15,34 @@ import TimelineModal from '../components/TimelineModal';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faExpandAlt } from '@fortawesome/free-solid-svg-icons'
 import LanguagesBarChart from '../components/LanguagesBarChart';
+import EmptyDataAlert from '../components/EmptyDataAlert';
+import { Hint } from 'intro.js';
 
 type Props = {
   children: ReactNode;
 };
 
-const progressBarTypes = ['success', 'info', 'warning', 'danger'];
+enum TabKey {
+  GENERAL = 'General',
+  LANGUAGES = 'Languages',
+}
 
 const GridContainer: FunctionComponent<Props> = () => {
+  const [hints, setHints] = useState<Hint[]>([
+    {
+      element: '.timeline-chart-container',
+      hint: 'The sentiment score is between -1 (negative) and 1 (positive). The value 0 represents a perfect neutrality score.',
+      hintPosition: 'top-left',
+    },
+    {
+      element: '.timeline-chart-container',
+      hint: 'Click on a blue and square point to focus the item in the editor.',
+      hintPosition: 'middle-middle',
+    },
+  ]);
+  const [tabKey, setTabKey] = useState<TabKey|null>(TabKey.GENERAL);
   const [showTimelineModal, setShowTimelineModal] = useState<boolean>(false);
   const [enableColorBlindness, setColorBlindness] = useState<boolean>(false);
-  const [showHints, setShowHints] = useState<boolean>(true);
   const [metrics, setMetrics] = useState<Metrics | null>(null);
   const [highlightSequence, setHighlightSequence] = useState<number>(-1);
 
@@ -40,18 +54,17 @@ const GridContainer: FunctionComponent<Props> = () => {
     setHighlightSequence(labelIndex);
   };
 
-  const hints = [
-    {
-      element: '.timeline-chart-container',
-      hint: 'The sentiment score is between -1 (negative) and 1 (positive). The value 0 means a perfect neutrality score.',
-      hintPosition: 'top-left',
-    },
-    {
-      element: '.timeline-chart-container',
-      hint: 'Click on a blue and square point to focus the item in the editor.',
-      hintPosition: 'middle-middle',
-    },
-  ];
+  const updateHints = (index: number) => {
+    const newHints = [...hints];
+
+    console.log('HINTS', newHints);
+
+    newHints.splice(index, 1);
+
+    setHints(newHints);
+  };
+
+  console.log('UPDATED HINTS', hints);
 
   return (
     <>
@@ -63,9 +76,9 @@ const GridContainer: FunctionComponent<Props> = () => {
       )}
 
       <Hints
-        enabled={metrics !== null && showHints}
+        enabled={metrics !== null && tabKey === TabKey.GENERAL}
         hints={hints}
-        onClose={() => setShowHints(false)}
+        onClose={(index) => updateHints(index)}
       />
 
       <div className="d-flex align-items-center justify-content-between mt-5 mb-3">
@@ -89,8 +102,12 @@ const GridContainer: FunctionComponent<Props> = () => {
             />
           </Col>
           <Col>
-            <Tabs defaultActiveKey="general">
-              <Tab eventKey="general" title="General">
+            <Tabs defaultActiveKey={TabKey.GENERAL} activeKey={tabKey} onSelect={(k) => setTabKey(k as TabKey)}>
+              <Tab eventKey={TabKey.GENERAL} title={TabKey.GENERAL}>
+                {!metrics && (
+                  <EmptyDataAlert />
+                )}
+
                 <div className="p-3">
                   {metrics && (
                     <>
@@ -122,34 +139,12 @@ const GridContainer: FunctionComponent<Props> = () => {
                 </div>
               </Tab>
 
-              <Tab eventKey="languages" title="Languages">
-                {metrics && (
-                    <LanguagesBarChart data={metrics.languages} />
+              <Tab eventKey={TabKey.LANGUAGES} title={TabKey.LANGUAGES}>
+                {!metrics && (
+                  <EmptyDataAlert />
                 )}
-              </Tab>
-              <Tab eventKey="raw" title="Raw">
                 {metrics && (
-                  <>
-                    <Button variant="primary" className="float-right" size="sm">
-                      Download
-                    </Button>
-                    <Table size="sm">
-                      <thead>
-                        <tr>
-                          <th># sentence</th>
-                          <th>Score</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {metrics.sentiments.map((sentiment, i) => (
-                          <tr key={uuidv4()}>
-                            <td>{i + 1}</td>
-                            <td>{sentiment}</td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </Table>
-                  </>
+                  <LanguagesBarChart data={metrics.languages} />
                 )}
               </Tab>
             </Tabs>
