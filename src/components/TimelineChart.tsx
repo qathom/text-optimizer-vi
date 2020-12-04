@@ -9,9 +9,9 @@ type Props = {
 const TimelineChart: FunctionComponent<Props> = ({ data, onLabelClicked }) => {
   const chartData = {
     datasets: [{
+      data,
       label: 'Sentiment per sentence',
       fill: false,
-      data: data,
       borderColor: '#333',
       pointBackgroundColor: '#0d6efd',
       pointBorderColor: '#0d6efd',
@@ -52,15 +52,31 @@ const TimelineChart: FunctionComponent<Props> = ({ data, onLabelClicked }) => {
               },
               scaleLabel: {
                 display: true,
-                labelString: 'Sentiment score',
+                labelString: 'Score du sentiment',
               },
             }],
             xAxes: [{
               ticks: {
                 padding: 20,
               },
+              scaleLabel: {
+                display: true,
+                labelString: '# Paragraphe',
+              },
             }],
           },
+					plugins: {
+						zoom: {
+							pan: {
+								enabled: true,
+								mode: 'x',
+							},
+							zoom: {
+								enabled: true,
+								mode: 'x',
+							},
+						},
+					},
         }}
       />
     </div>
