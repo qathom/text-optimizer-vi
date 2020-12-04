@@ -41,7 +41,7 @@ const LanguagesBarChart: FunctionComponent<Props> = ({ data }) => {
   const chartData = getChartData(data);
 
   return (
-    <div className="timeline-chart-container" style={{ height: '200px' }}>
+    <div className="language-chart-container" style={{ height: '200px' }}>
       <Bar
         data={chartData}
         height={200}
