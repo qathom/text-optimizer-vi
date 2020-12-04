@@ -2,6 +2,9 @@
 # text-optimizer-vi
 
 > HES-SO project course for Information Visualisation
+
+![Deploy to github pages (master)](https://github.com/qathom/text-optimizer-vi/workflows/Deploy%20to%20github%20pages%20(master)/badge.svg)
+
 ## Prerequisites
 node.js > 10.0.0 && node.js < 15.0
 ## Installation
