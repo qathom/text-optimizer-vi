@@ -19,9 +19,6 @@ const wordTokenizer = new natural.WordTokenizer();
 const sentenceTokenizer = new natural.SentenceTokenizer();
 const analyzer = new Analyzer("English", stemmer, "afinn");
 
-// languagedetect
-//const LanguageDetect = require("languagedetect");
-//const lngDetector = new LanguageDetect();
 var franc = require("franc");
 
 type Props = {
