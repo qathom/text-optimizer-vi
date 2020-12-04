@@ -12,9 +12,7 @@ import './plugins/chart';
 function App() {
   return (
     <DefaultLayout>
-    <GridContainer>
-        
-      </GridContainer>
+      <GridContainer></GridContainer>
     </DefaultLayout>
   );
 }

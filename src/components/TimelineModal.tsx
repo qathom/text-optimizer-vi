@@ -1,5 +1,5 @@
-import React, { FunctionComponent, useEffect } from 'react';
-import { useState } from 'react';
+import React, { FunctionComponent, useEffect , useState } from 'react';
+
 import { Button, Modal } from 'react-bootstrap';
 import { TimelineChartData } from '../../types';
 import TimelineChart from './TimelineChart';
@@ -23,7 +23,7 @@ const TimelineModal: FunctionComponent<Props> = ({ show, chartData, handleClose 
     <Modal
       show={showModal}
       onHide={handleModalClose}
-      backdrop={true}
+      backdrop
       size="lg"
     >
       <Modal.Header closeButton>

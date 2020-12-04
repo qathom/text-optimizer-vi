@@ -1,6 +1,6 @@
-import React, { FunctionComponent, useEffect, useState } from 'react';
-import chartjs, { Chart } from 'chart.js';
-import { Bar, ChartData } from 'react-chartjs-2';
+import React, { FunctionComponent } from 'react';
+import { Chart } from 'chart.js';
+import { Bar } from 'react-chartjs-2';
 
 type Props = {
   data: Map<string, number[]>;
@@ -32,7 +32,7 @@ function getChartData(data: Map<string, number[]>) {
 
   return {
     datasets,
-    //labels: [...data.values()].map((_value, i) => `Paragraphe ${i}`),
+    // labels: [...data.values()].map((_value, i) => `Paragraphe ${i}`),
     labels: (data.get('eng')??[]).map((value, idx) => `Paragraphe ${idx}`)
   };
 }

@@ -1,4 +1,4 @@
-import React, { FunctionComponent, ReactNode, useEffect, useState } from 'react';
+import React, { FunctionComponent, ReactNode, useState } from 'react';
 import {
   Row,
   Col,
@@ -7,19 +7,19 @@ import {
   Button,
   Form,
 } from 'react-bootstrap';
+import { Hints } from 'intro.js-react';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faExpandAlt } from '@fortawesome/free-solid-svg-icons'
+import { Hint } from 'intro.js';
 import { Metrics } from '../../types';
 import Editor from '../components/Editor';
 import TimelineChart from '../components/TimelineChart';
-import { Hints } from 'intro.js-react';
 import TimelineModal from '../components/TimelineModal';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faExpandAlt } from '@fortawesome/free-solid-svg-icons'
 import LanguagesBarChart from '../components/LanguagesBarChart';
 import EmptyDataAlert from '../components/EmptyDataAlert';
-import { Hint } from 'intro.js';
 
 type Props = {
-  children: ReactNode;
+  children?: ReactNode;
 };
 
 enum TabKey {
