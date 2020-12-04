@@ -6,6 +6,9 @@ import 'intro.js/introjs.css';
 import 'intro.js/themes/introjs-dark.css';
 import './App.scss';
 
+// Plugins
+import './plugins/chart';
+
 function App() {
   return (
     <DefaultLayout>
