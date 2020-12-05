@@ -18,7 +18,7 @@ import isTextNeutral from '../utils/text';
 const Analyzer = natural.SentimentAnalyzer;
 const stemmer = natural.PorterStemmer;
 const wordTokenizer = new natural.WordTokenizer();
-const sentenceTokenizer = new natural.TreebankWordTokenizer();
+const sentenceTokenizer = new natural.SentenceTokenizer();
 const analyzer = new Analyzer('English', stemmer, 'afinn');
 
 type Props = {
@@ -75,11 +75,11 @@ const Editor: FunctionComponent<Props> = ({ onUpdateMetrics, highlight }) => {
     ]);
 
     paragraphTokens.forEach((paragraph) => {
-      [...languages.keys()].forEach((key) => {
-        languages.set(key, [0]);
-      });
-
       // sentenceTokens.For each sentence
+      let t = languages.get("eng")?.push(0);
+      t = languages.get("deu")?.push(0);
+      t = languages.get("fra")?.push(0);
+      t = languages.get("ita")?.push(0);
       const sentences: string[] = sentenceTokenizer.tokenize(paragraph);
       let consirederSentencesNumber = sentences.length;
       sentences.forEach((sentence) => {
@@ -89,6 +89,7 @@ const Editor: FunctionComponent<Props> = ({ onUpdateMetrics, highlight }) => {
         });
 
         console.log(`lang:${  lang}`);
+        console.log(`sentence:${  sentence}`);
 
         if (languages.has(lang)) {
           const currentArray = languages.get(lang) ?? [];
@@ -114,7 +115,7 @@ const Editor: FunctionComponent<Props> = ({ onUpdateMetrics, highlight }) => {
       neutralityScore:
         round(sentiments.reduce((acc, sentiment) => acc + sentiment, 0) /
         sentiments.length),
-      languages, // TODO  alex
+      languages,
     });
   };
 
