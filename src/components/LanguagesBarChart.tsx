@@ -33,7 +33,7 @@ function getChartData(data: Map<string, number[]>) {
   return {
     datasets,
     // labels: [...data.values()].map((_value, i) => `Paragraphe ${i}`),
-    labels: (data.get('eng')??[]).map((value, idx) => `Paragraphe ${idx}`)
+    labels: (data.get('eng')??[]).map((value, idx) => `Paragraph ${idx}`)
   };
 }
 
@@ -41,7 +41,7 @@ const LanguagesBarChart: FunctionComponent<Props> = ({ data }) => {
   const chartData = getChartData(data);
 
   return (
-    <div className="language-chart-container" style={{ height: '200px' }}>
+    <div className="languages-chart-container" style={{ height: '200px' }}>
       <Bar
         data={chartData}
         height={200}
@@ -69,7 +69,7 @@ const LanguagesBarChart: FunctionComponent<Props> = ({ data }) => {
               },
               scaleLabel: {
                 display: true,
-                labelString: '# Paragraphe',
+                labelString: '# Paragraph',
               },
             }],
           },

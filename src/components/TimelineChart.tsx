@@ -1,25 +1,42 @@
 import React, { FunctionComponent } from 'react';
 import { Line } from 'react-chartjs-2';
+import isTextNeutral from '../utils/text';
 
 type Props = {
-  data: number[];
+  data: number[],
+  colorBlindness: boolean,
   onLabelClicked: (labelIndex: number) => void,
 };
 
-const TimelineChart: FunctionComponent<Props> = ({ data, onLabelClicked }) => {
+const TimelineChart: FunctionComponent<Props> = ({ data, onLabelClicked, colorBlindness }) => {
+  const getColor = (res: number) => {
+    const colorPositive = colorBlindness ? '#90caf9' : '#a5d6a7';
+    const colorNegative = colorBlindness ? '#ffef61' : '#ef9a9a';
+
+    if (isTextNeutral(res)) {
+      return '#333';
+    }
+
+    if (res > 0) {
+      return colorPositive;
+    }
+
+    return colorNegative;
+  };
+
   const chartData = {
     datasets: [{
       data,
-      label: 'Sentiment per sentence',
+      label: 'Sentiment per paragraph',
       fill: false,
       borderColor: '#333',
-      pointBackgroundColor: '#0d6efd',
-      pointBorderColor: '#0d6efd',
+      pointBackgroundColor: data.map((res) => getColor(res)),
+      pointBorderColor: data.map((res) => getColor(res)),
+      pointHoverBackgroundColor: data.map((res) => getColor(res)),
+      pointHoverBorderColor: data.map((res) => getColor(res)),
       pointStyle: 'rect',
       pointBorderWidth: 10,
       pointHoverBorderWidth: 14,
-      pointHoverBackgroundColor: '#0d6efd',
-      pointHoverBorderColor: '#0d6efd',
     }],
     labels: data.map((s, i) => `${i + 1}`),
   };
@@ -43,6 +60,11 @@ const TimelineChart: FunctionComponent<Props> = ({ data, onLabelClicked }) => {
         options={{
           maintainAspectRatio: false,
           responsive: true,
+          legend: {
+            labels: {
+              boxWidth: 0,
+            },
+          },
           scales: {
             yAxes: [{
               display: true,
@@ -62,7 +84,7 @@ const TimelineChart: FunctionComponent<Props> = ({ data, onLabelClicked }) => {
               },
               scaleLabel: {
                 display: true,
-                labelString: '# Paragraphe',
+                labelString: '# Paragraph',
               },
             }],
           },

@@ -6,17 +6,19 @@ import {
   Tab,
   Button,
   Form,
+  OverlayTrigger,
+  Tooltip,
 } from 'react-bootstrap';
-import { Hints } from 'intro.js-react';
+import { Steps } from 'intro.js-react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faExpandAlt } from '@fortawesome/free-solid-svg-icons'
-import { Hint } from 'intro.js';
+import { faExpandAlt, faGrimace, faQuestionCircle, faSmile } from '@fortawesome/free-solid-svg-icons'
 import { Metrics } from '../../types';
 import Editor from '../components/Editor';
 import TimelineChart from '../components/TimelineChart';
 import TimelineModal from '../components/TimelineModal';
 import LanguagesBarChart from '../components/LanguagesBarChart';
 import EmptyDataAlert from '../components/EmptyDataAlert';
+import isTextNeutral from '../utils/text';
 
 type Props = {
   children?: ReactNode;
@@ -28,18 +30,7 @@ enum TabKey {
 }
 
 const GridContainer: FunctionComponent<Props> = () => {
-  const [hints, setHints] = useState<Hint[]>([
-    {
-      element: '.timeline-chart-container',
-      hint: 'The sentiment score is between -1 (negative) and 1 (positive). The value 0 represents a perfect neutrality score.',
-      hintPosition: 'top-left',
-    },
-    {
-      element: '.timeline-chart-container',
-      hint: 'Click on a blue and square point to focus the item in the editor.',
-      hintPosition: 'middle-middle',
-    },
-  ]);
+  const [showGuide, setShowGuide] = useState<boolean>(true);
   const [tabKey, setTabKey] = useState<TabKey|null>(TabKey.GENERAL);
   const [showTimelineModal, setShowTimelineModal] = useState<boolean>(false);
   const [enableColorBlindness, setColorBlindness] = useState<boolean>(false);
@@ -54,46 +45,126 @@ const GridContainer: FunctionComponent<Props> = () => {
     setHighlightSequence(labelIndex);
   };
 
-  const updateHints = (index: number) => {
-    const newHints = [...hints];
+  
+  const steps = [
+    {
+      element: '.timeline-chart-container',
+      intro: 'The sentiment score is negative when it is below 0 and positive when the score is above 0. The value 0 represents a perfect neutrality score.',
+      position: 'top',
+    },
+    {
+      element: '.timeline-chart-container',
+      intro: 'Click on a square point to focus the item in the editor.',
+      position: 'left',
+    },
+    {
+      element: '.timeline-chart-container',
+      intro: 'Scroll in the chart to zoom in or zoom out.',
+      position: 'top',
+    },
+    {
+      element: '.neutrality-score',
+      intro: 'The overall neutrality score is displayed here.',
+      position: 'top',
+    },
+    {
+      element: '.neutrality-variance',
+      intro: 'The variance measures how far a set of numbers is spread out from their average value.',
+      position: 'top',
+    },
+    {
+      element: '[data-rb-event-key="Languages"]',
+      intro: 'Let\'s move to the language tab',
+      position: 'top',
+    },
+    {
+      element: '.languages-tab',
+      intro: 'Here we detect the languages. You can identify words used in different languages.',
+      position: 'top',
+    },
+    {
+      element: '.custom-switch',
+      intro: 'Finally, you might want to enable coloring for colorblindness',
+      position: 'top',
+    },
+  ];
 
-    console.log('HINTS', newHints);
+  const textIsNeutral = isTextNeutral(metrics?.neutralityScore ?? 0);
 
-    newHints.splice(index, 1);
+  const onStepChange = (nextStepIndex: number) => {
+    if (nextStepIndex >= 5) {
+      if (tabKey !== TabKey.LANGUAGES) {
+        setTabKey(TabKey.LANGUAGES);
+      }
 
-    setHints(newHints);
+      return;
+    }
+
+    if (TabKey.GENERAL !== tabKey) {
+      setTabKey(TabKey.GENERAL);
+    }
   };
 
-  console.log('UPDATED HINTS', hints);
+  const onExit = () => {
+    setShowGuide(false);
+    setTabKey(TabKey.GENERAL);
+  };
 
   return (
     <>
       {metrics && (
-        <TimelineModal show={showTimelineModal} handleClose={() => setShowTimelineModal(false)} chartData={{
+        <TimelineModal
+          show={showTimelineModal}
+          colorBlindness={enableColorBlindness}
+          handleClose={() => setShowTimelineModal(false)} chartData={{
           data: metrics.sentiments,
           onLabelClicked: onHighlightLabel,
         }} />
       )}
 
-      <Hints
-        enabled={metrics !== null && tabKey === TabKey.GENERAL}
-        hints={hints}
-        onClose={(index) => updateHints(index)}
+      <Steps
+        enabled={metrics !== null && showGuide}
+        steps={steps}
+        initialStep={0}
+        onExit={onExit}
+        onBeforeChange={onStepChange}
       />
 
-      <div className="d-flex align-items-center justify-content-between mt-5 mb-3">
-        <h3 className="text-muted">Text optimizer</h3>
-
-        <Form.Check
-          type="switch"
-          id="switch-accessibility"
-          onChange={() => setColorBlindness(!enableColorBlindness)}
-          value={enableColorBlindness ? 'checked' : ''}
-          label="Enable color blindness helper"
-        />
-      </div>
+      <h3 className="mt-5 mb-3 text-muted">
+        Compose neutral text easily
+      </h3>
 
       <main className={enableColorBlindness ? 'enable-color-blindness' : ''}>
+        <div className="d-flex align-items-center justify-content-between">
+          <OverlayTrigger
+            key="overlay-help"
+            placement="top"
+            overlay={
+              <Tooltip id="tooltip-overlay-help">
+                {metrics === null && (
+                  <>Start by writing some text below!</>
+                )}
+                {metrics !== null && (
+                  <>Follow our guide!</>
+                )}
+              </Tooltip>
+            }
+          >
+            <Button variant="light" disabled={metrics === null} onClick={() => setShowGuide(true)}>
+              <FontAwesomeIcon icon={faQuestionCircle} onClick={() => setShowGuide(true)} />
+              <span className="ml-3">Help</span>
+            </Button>
+          </OverlayTrigger>
+
+          <Form.Check
+            type="switch"
+            id="switch-accessibility"
+            onChange={() => setColorBlindness(!enableColorBlindness)}
+            value={enableColorBlindness ? 'checked' : ''}
+            label="Enable coloring for colorblindness"
+          />
+        </div>
+
         <Row className="bg-white p-3">
           <Col>
             <Editor
@@ -117,6 +188,7 @@ const GridContainer: FunctionComponent<Props> = () => {
                       </Button>
 
                       <TimelineChart
+                        colorBlindness={enableColorBlindness}
                         data={metrics.sentiments}
                         onLabelClicked={onHighlightLabel}
                       />
@@ -125,12 +197,15 @@ const GridContainer: FunctionComponent<Props> = () => {
                           <h3 className="text-muted">{metrics.countWords}</h3>
                           Words
                         </Col>
-                        <Col>
-                          <h3 className="text-muted">{metrics.neutralityScore.toLocaleString(undefined, {maximumFractionDigits:2})}</h3>
+                        <Col className="neutrality-score col-separator">
+                          <h3 className="text-muted">
+                            {metrics.neutralityScore}
+                            <FontAwesomeIcon className={textIsNeutral ? 'ml-2 icon-success' : 'icon-warning'} icon={textIsNeutral ? faSmile : faGrimace } />
+                          </h3>
                           Neutrality score
                         </Col>
-                        <Col className="col-separator">
-                          <h3 className="text-muted">{metrics.varianceScore.toLocaleString(undefined, {maximumFractionDigits:2})}</h3>
+                        <Col className="neutrality-variance">
+                          <h3 className="text-muted">{metrics.varianceScore}</h3>
                           Neutrality variance
                         </Col>
                       </Row>
@@ -139,7 +214,7 @@ const GridContainer: FunctionComponent<Props> = () => {
                 </div>
               </Tab>
 
-              <Tab eventKey={TabKey.LANGUAGES} title={TabKey.LANGUAGES}>
+              <Tab className="languages-tab" eventKey={TabKey.LANGUAGES} title={TabKey.LANGUAGES}>
                 {!metrics && (
                   <EmptyDataAlert />
                 )}

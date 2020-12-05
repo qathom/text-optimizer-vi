@@ -7,10 +7,11 @@ import TimelineChart from './TimelineChart';
 type Props = {
   show: boolean,
   chartData: TimelineChartData,
+  colorBlindness: boolean,
   handleClose: () => void,
 };
 
-const TimelineModal: FunctionComponent<Props> = ({ show, chartData, handleClose }) => {
+const TimelineModal: FunctionComponent<Props> = ({ show, chartData, handleClose, colorBlindness }) => {
   const [showModal, setShow] = useState(show);
 
   useEffect(() => {
@@ -31,6 +32,7 @@ const TimelineModal: FunctionComponent<Props> = ({ show, chartData, handleClose 
       </Modal.Header>
       <Modal.Body>
         <TimelineChart
+          colorBlindness={colorBlindness}
           data={chartData.data}
           onLabelClicked={chartData.onLabelClicked}
         />

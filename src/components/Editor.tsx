@@ -12,6 +12,8 @@ import Highlight from '@ckeditor/ckeditor5-highlight/src/highlight';
 import { scrollViewportToShowTarget } from '@ckeditor/ckeditor5-utils/src/dom/scroll';
 import franc from 'franc';
 import { Metrics } from '../../types';
+import round from '../utils/round';
+import isTextNeutral from '../utils/text';
 
 const Analyzer = natural.SentimentAnalyzer;
 const stemmer = natural.PorterStemmer;
@@ -81,11 +83,11 @@ const Editor: FunctionComponent<Props> = ({ onUpdateMetrics, highlight }) => {
       const sentences: string[] = sentenceTokenizer.tokenize(paragraph);
       let consirederSentencesNumber = sentences.length;
       sentences.forEach((sentence) => {
-      console.log(sentence);
         const lang = franc(sentence, {
           minLength: 5,
           only: ['fra', 'eng', 'deu', 'ita'],
         });
+
         console.log(`lang:${  lang}`);
 
         if (languages.has(lang)) {
@@ -107,11 +109,11 @@ const Editor: FunctionComponent<Props> = ({ onUpdateMetrics, highlight }) => {
     const variance = meanTot.reduce((val, val2) => val+val2,0) / sentiments.length;
     setMetrics({
       countWords: wordTokens.length,
-      varianceScore: variance,
+      varianceScore: round(variance),
       sentiments,
       neutralityScore:
-        sentiments.reduce((acc, sentiment) => acc + sentiment, 0) /
-        sentiments.length,
+        round(sentiments.reduce((acc, sentiment) => acc + sentiment, 0) /
+        sentiments.length),
       languages, // TODO  alex
     });
   };
@@ -223,14 +225,11 @@ const Editor: FunctionComponent<Props> = ({ onUpdateMetrics, highlight }) => {
 
       const res = analyzer.getSentiment(wordTokenizer.tokenize(text));
 
-      const isNegative = res < -0.2;
-      const isPositive = res > 0.2;
-
       // DEBUG
       // console.log(textNode, '=>', res);
 
-      if (isNegative || isPositive) {
-        highlightNode(localEditor, writer, node, isPositive ? 'green' : 'pink');
+      if (!isTextNeutral(res)) {
+        highlightNode(localEditor, writer, node, res > 0 ? 'green' : 'pink');
       } else {
         removeHighlight(localEditor, writer, node);
       }

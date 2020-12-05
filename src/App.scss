@@ -36,6 +36,17 @@
 @import "~bootstrap/scss/utilities";
 @import "~bootstrap/scss/print";
 
+// Custom variables
+$success: #a5d6a7;
+$success-selection: #a5d6a7;
+$success-blindness: #90caf9;
+$success-blindness-selection: darken($success-blindness, 20%);
+
+$warning: #ef9a9a;
+$warning-selection: #ef9a9a;
+$warning-blindness: #ffef61;
+$warning-blindness-selection: darken($warning-blindness, 20%);
+
 html,
 body {
   background-color: $light;
@@ -48,41 +59,57 @@ body {
 
 .marker-green {
   transition: background-color ease-in-out 300ms;
-  background-color: #a5d6a7 !important;
+  background-color: $success !important;
 
   &::selection {
-    background-color: #66bb6a !important;
+    background-color: $success-selection !important;
     color: #fff;
   }
+}
+
+.icon-success {
+  color: $success !important;
 }
 
 .marker-pink {
   transition: background-color ease-in-out 300ms;
-  background-color: #ef9a9a !important;
+  background-color: $warning !important;
 
   &::selection {
-    background-color: #ef5350 !important;
+    background-color: $warning-selection !important;
     color: #fff;
   }
 }
 
+.icon-warning {
+  color: $warning;
+}
+
 .enable-color-blindness {
   .marker-green {
-    background-color: #90caf9 !important;
+    background-color: $success-blindness !important;
   
     &::selection {
-      background-color: #42a5f5 !important;
+      background-color: $success-blindness-selection !important;
       color: #fff;
     }
   }
   
   .marker-pink {
-    background-color: #fff59d !important;
+    background-color: $warning-blindness !important;
   
     &::selection {
-      background-color: #ffee58 !important;
+      background-color: $warning-blindness-selection !important;
       color: #fff;
     }
+  }
+
+  .icon-success {
+    color: $success-blindness !important;
+  }
+
+  .icon-warning {
+    color: $warning-blindness !important;
   }
 }
 
@@ -101,4 +128,9 @@ body {
 
 .main-container {
   max-width: 1400px !important;
+}
+
+// Icons
+.svg-inline--fa {
+  font-size: 18px;
 }
