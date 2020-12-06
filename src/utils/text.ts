@@ -1,3 +1,5 @@
 export default function isTextNeutral (value: number): boolean {
-  return value < 0.2 && value > -0.2;
+  const threshold = 0.1;
+
+  return value < threshold && value > -threshold;
 }

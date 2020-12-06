@@ -19,6 +19,7 @@ import TimelineModal from '../components/TimelineModal';
 import LanguagesBarChart from '../components/LanguagesBarChart';
 import EmptyDataAlert from '../components/EmptyDataAlert';
 import isTextNeutral from '../utils/text';
+import introSteps from '../utils/intro';
 
 type Props = {
   children?: ReactNode;
@@ -44,50 +45,6 @@ const GridContainer: FunctionComponent<Props> = () => {
   const onHighlightLabel = (labelIndex: number) => {
     setHighlightSequence(labelIndex);
   };
-
-  
-  const steps = [
-    {
-      element: '.timeline-chart-container',
-      intro: 'The sentiment score is negative when it is below 0 and positive when the score is above 0. The value 0 represents a perfect neutrality score.',
-      position: 'top',
-    },
-    {
-      element: '.timeline-chart-container',
-      intro: 'Click on a square point to focus the item in the editor.',
-      position: 'left',
-    },
-    {
-      element: '.timeline-chart-container',
-      intro: 'Scroll in the chart to zoom in or zoom out.',
-      position: 'top',
-    },
-    {
-      element: '.neutrality-score',
-      intro: 'The overall neutrality score is displayed here.',
-      position: 'top',
-    },
-    {
-      element: '.neutrality-variance',
-      intro: 'The variance measures how far a set of numbers is spread out from their average value.',
-      position: 'top',
-    },
-    {
-      element: '[data-rb-event-key="Languages"]',
-      intro: 'Let\'s move to the language tab',
-      position: 'top',
-    },
-    {
-      element: '.languages-tab',
-      intro: 'Here we detect the languages. You can identify words used in different languages.',
-      position: 'top',
-    },
-    {
-      element: '.custom-switch',
-      intro: 'Finally, you might want to enable coloring for colorblindness',
-      position: 'top',
-    },
-  ];
 
   const textIsNeutral = isTextNeutral(metrics?.neutralityScore ?? 0);
 
@@ -124,7 +81,7 @@ const GridContainer: FunctionComponent<Props> = () => {
 
       <Steps
         enabled={metrics !== null && showGuide}
-        steps={steps}
+        steps={introSteps}
         initialStep={0}
         onExit={onExit}
         onBeforeChange={onStepChange}
@@ -150,10 +107,13 @@ const GridContainer: FunctionComponent<Props> = () => {
               </Tooltip>
             }
           >
-            <Button variant="light" disabled={metrics === null} onClick={() => setShowGuide(true)}>
-              <FontAwesomeIcon icon={faQuestionCircle} onClick={() => setShowGuide(true)} />
-              <span className="ml-3">Help</span>
-            </Button>
+            {({ ref, ...triggerHandler }) => (
+              // eslint-disable-next-line react/jsx-props-no-spreading
+              <Button variant="light" disabled={metrics === null} onClick={() => setShowGuide(true)} ref={ref} {...triggerHandler}>
+                <FontAwesomeIcon icon={faQuestionCircle} onClick={() => setShowGuide(true)} />
+                <span className="ml-3">Help</span>
+              </Button>
+            )}
           </OverlayTrigger>
 
           <Form.Check

@@ -75,7 +75,7 @@ const TimelineChart: FunctionComponent<Props> = ({ data, onLabelClicked, colorBl
               },
               scaleLabel: {
                 display: true,
-                labelString: 'Score du sentiment',
+                labelString: 'Sentiment score',
               },
             }],
             xAxes: [{
