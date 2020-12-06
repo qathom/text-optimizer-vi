@@ -65,7 +65,7 @@ const Editor: FunctionComponent<Props> = ({ onUpdateMetrics, highlight }) => {
 
     const wordTokens: string[] = wordTokenizer.tokenize(plainContent);
     const sentiments: number[] = paragraphTokens.map(
-      (s) => analyzer.getSentiment(wordTokenizer.tokenize(s)) || 0
+      (s) => round(analyzer.getSentiment(wordTokenizer.tokenize(s)) || 0)
     );
     const languages = new Map<string, number[]>([
       ['eng', []],
