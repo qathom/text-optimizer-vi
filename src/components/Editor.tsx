@@ -1,6 +1,5 @@
 import React, { FunctionComponent, useEffect, useState } from 'react';
 import { Form } from 'react-bootstrap';
-import natural from 'natural';
 import { CKEditor } from '@ckeditor/ckeditor5-react';
 import ClassicEditor from '@ckeditor/ckeditor5-editor-classic/src/classiceditor';
 import Essentials from '@ckeditor/ckeditor5-essentials/src/essentials';
@@ -14,6 +13,8 @@ import franc from 'franc';
 import { Metrics } from '../../types';
 import round from '../utils/round';
 import isTextNeutral from '../utils/text';
+
+const natural = require('natural');
 
 const Analyzer = natural.SentimentAnalyzer;
 const stemmer = natural.PorterStemmer;
