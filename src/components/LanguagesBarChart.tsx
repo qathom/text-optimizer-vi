@@ -3,7 +3,8 @@ import { Chart } from 'chart.js';
 import { Bar } from 'react-chartjs-2';
 
 type Props = {
-  data: Map<string, number[]>;
+  data: Map<string, number[]>,
+  onBarClicked: (labelIndex: number) => void,
 };
 
 const colors = [
@@ -38,14 +39,25 @@ function getChartData(data: Map<string, number[]>) {
   };
 }
 
-const LanguagesBarChart: FunctionComponent<Props> = ({ data }) => {
+const LanguagesBarChart: FunctionComponent<Props> = ({ data, onBarClicked }) => {
   const chartData = getChartData(data);
+
+  const onElementClick = (elements) => {
+    if (elements.length === 0) {
+      return;
+    }
+
+    const [first] = elements;
+
+    onBarClicked(first._index);
+  };
 
   return (
     <div className="languages-chart-container" style={{ height: '200px' }}>
       <Bar
         data={chartData}
         height={200}
+        onElementsClick={onElementClick}
         options={{
           maintainAspectRatio: false,
           responsive: true,

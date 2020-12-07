@@ -151,6 +151,7 @@ const GridContainer: FunctionComponent<Props> = () => {
                         colorBlindness={enableColorBlindness}
                         data={metrics.sentiments}
                         onLabelClicked={onHighlightLabel}
+                        
                       />
                       <Row className="text-center mt-5">
                         <Col className="col-separator">
@@ -179,7 +180,9 @@ const GridContainer: FunctionComponent<Props> = () => {
                   <EmptyDataAlert />
                 )}
                 {metrics && (
-                  <LanguagesBarChart data={metrics.languages} />
+                  <LanguagesBarChart data={metrics.languages}
+                  onBarClicked={onHighlightLabel}
+                  />
                 )}
               </Tab>
             </Tabs>

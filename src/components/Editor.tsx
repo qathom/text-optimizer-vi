@@ -1,26 +1,26 @@
-import React, { FunctionComponent, useEffect, useState } from 'react';
-import { Form } from 'react-bootstrap';
-import { CKEditor } from '@ckeditor/ckeditor5-react';
-import ClassicEditor from '@ckeditor/ckeditor5-editor-classic/src/classiceditor';
-import Essentials from '@ckeditor/ckeditor5-essentials/src/essentials';
-import Bold from '@ckeditor/ckeditor5-basic-styles/src/bold';
-import Italic from '@ckeditor/ckeditor5-basic-styles/src/italic';
-import Paragraph from '@ckeditor/ckeditor5-paragraph/src/paragraph';
-import Heading from '@ckeditor/ckeditor5-heading/src/heading';
-import Highlight from '@ckeditor/ckeditor5-highlight/src/highlight';
-import { scrollViewportToShowTarget } from '@ckeditor/ckeditor5-utils/src/dom/scroll';
-import franc from 'franc';
-import { Metrics } from '../../types';
-import round from '../utils/round';
-import isTextNeutral from '../utils/text';
+import React, { FunctionComponent, useEffect, useState } from "react";
+import { Form } from "react-bootstrap";
+import { CKEditor } from "@ckeditor/ckeditor5-react";
+import ClassicEditor from "@ckeditor/ckeditor5-editor-classic/src/classiceditor";
+import Essentials from "@ckeditor/ckeditor5-essentials/src/essentials";
+import Bold from "@ckeditor/ckeditor5-basic-styles/src/bold";
+import Italic from "@ckeditor/ckeditor5-basic-styles/src/italic";
+import Paragraph from "@ckeditor/ckeditor5-paragraph/src/paragraph";
+import Heading from "@ckeditor/ckeditor5-heading/src/heading";
+import Highlight from "@ckeditor/ckeditor5-highlight/src/highlight";
+import { scrollViewportToShowTarget } from "@ckeditor/ckeditor5-utils/src/dom/scroll";
+import franc from "franc";
+import { Metrics } from "../../types";
+import round from "../utils/round";
+import isTextNeutral from "../utils/text";
 
-const natural = require('natural');
+const natural = require("natural");
 
 const Analyzer = natural.SentimentAnalyzer;
 const stemmer = natural.PorterStemmer;
 const wordTokenizer = new natural.WordTokenizer();
 const sentenceTokenizer = new natural.SentenceTokenizer();
-const analyzer = new Analyzer('English', stemmer, 'afinn');
+const analyzer = new Analyzer("English", stemmer, "afinn");
 
 type Props = {
   onUpdateMetrics: (metrics: Metrics) => void;
@@ -30,15 +30,15 @@ type Props = {
 const Editor: FunctionComponent<Props> = ({ onUpdateMetrics, highlight }) => {
   const [editor, setEditor] = useState<any>(null);
   const [selectNode, setSelectNode] = useState<number>(highlight);
-  const [content, setContent] = useState<string>('');
+  const [content, setContent] = useState<string>("");
   const [metrics, setMetrics] = useState<Metrics | null>(null);
   const [timeout, setEditTimeout] = useState<NodeJS.Timeout | null>(null);
   const [lastEdit, setLastEdit] = useState<Date | null>(null);
   const [ready, setReady] = useState<boolean>(false);
-  const [pasteDate, setPasteDate] = useState<Date|null>(null);
+  const [pasteDate, setPasteDate] = useState<Date | null>(null);
 
   const getPlainText = (formattedText: string) => {
-    const div: HTMLElement = document.createElement('div');
+    const div: HTMLElement = document.createElement("div");
     div.innerHTML = formattedText;
     return div.innerText;
   };
@@ -46,10 +46,10 @@ const Editor: FunctionComponent<Props> = ({ onUpdateMetrics, highlight }) => {
   const extractParagraphs = (): string[] => {
     const paragraphs: string[] = [];
     const matches = [...content.matchAll(/p>(.*?)<\/p/g)];
-    const exclude: string[] = ['&nbsp;'];
+    const exclude: string[] = ["&nbsp;"];
 
     matches.forEach((match) => {
-      const sentence = getPlainText((match[1] ?? '')).trim();
+      const sentence = getPlainText(match[1] ?? "").trim();
       if (sentence.length > 0 && !exclude.includes(sentence)) {
         paragraphs.push(sentence);
       }
@@ -63,14 +63,14 @@ const Editor: FunctionComponent<Props> = ({ onUpdateMetrics, highlight }) => {
     const plainContent = getPlainText(content);
 
     const wordTokens: string[] = wordTokenizer.tokenize(plainContent);
-    const sentiments: number[] = paragraphTokens.map(
-      (s) => round(analyzer.getSentiment(wordTokenizer.tokenize(s)) || 0)
+    const sentiments: number[] = paragraphTokens.map((s) =>
+      round(analyzer.getSentiment(wordTokenizer.tokenize(s)) || 0)
     );
     const languages = new Map<string, number[]>([
-      ['eng', []],
-      ['deu', []],
-      ['fra', []],
-      ['ita', []],
+      ["eng", []],
+      ["deu", []],
+      ["fra", []],
+      ["ita", []],
     ]);
 
     paragraphTokens.forEach((paragraph) => {
@@ -80,22 +80,22 @@ const Editor: FunctionComponent<Props> = ({ onUpdateMetrics, highlight }) => {
       t = languages.get("fra")?.push(0);
       t = languages.get("ita")?.push(0);
       const sentences: string[] = sentenceTokenizer.tokenize(paragraph);
-      let consirederSentencesNumber = sentences.length;
+      let consirededSentencesNumber = sentences.length;
 
       sentences.forEach((sentence) => {
         const lang = franc(sentence, {
           minLength: 5,
-          only: ['fra', 'eng', 'deu', 'ita'],
+          only: ["fra", "eng", "deu", "ita"],
         });
 
         console.log(`lang: ${lang}`);
 
         if (languages.has(lang)) {
           const currentArray = languages.get(lang) ?? [];
-          currentArray[currentArray.length-1 ?? -1] += 1;
+          currentArray[currentArray.length - 1 ?? -1] += 1;
         } else {
           // undefined returned
-          consirederSentencesNumber -= 1;
+          consirededSentencesNumber -= 1;
         }
       });
 
@@ -108,23 +108,30 @@ const Editor: FunctionComponent<Props> = ({ onUpdateMetrics, highlight }) => {
       */
 
       [...languages.keys()].forEach((lang) => {
-        const values = [...languages.get(lang) ?? []];
-        values[values.length - 1] = values[values.length - 1] / consirederSentencesNumber;
+        const values = [...(languages.get(lang) ?? [])];
+        values[values.length - 1] =
+        round(values[values.length - 1] / consirededSentencesNumber);
         languages.set(lang, values);
       });
     });
 
-    const mean = sentiments.reduce( ( firstSentiment, secondsentiment ) => firstSentiment+ secondsentiment, 0 ) / sentiments.length;
+    const mean =
+      sentiments.reduce(
+        (firstSentiment, secondsentiment) => firstSentiment + secondsentiment,
+        0
+      ) / sentiments.length;
     const meanTot = sentiments.map((sentiment) => (sentiment - mean) ** 2);
-    const variance = meanTot.reduce((val, val2) => val+val2,0) / sentiments.length ?? 0;
+    const variance =
+      meanTot.reduce((val, val2) => val + val2, 0) / sentiments.length ?? 0;
 
     setMetrics({
       countWords: wordTokens.length,
       varianceScore: round(variance),
       sentiments,
-      neutralityScore:
-        round(sentiments.reduce((acc, sentiment) => acc + sentiment, 0) /
-        sentiments.length),
+      neutralityScore: round(
+        sentiments.reduce((acc, sentiment) => acc + sentiment, 0) /
+          sentiments.length
+      ),
       languages,
     });
   };
@@ -173,7 +180,7 @@ const Editor: FunctionComponent<Props> = ({ onUpdateMetrics, highlight }) => {
       const root = editor.model.document.getRoot();
       const child = root.getChild(highlight);
       const start = writer.createPositionAt(child, 0);
-      const end = writer.createPositionAt(child, 'end');
+      const end = writer.createPositionAt(child, "end");
       const range = writer.createRange(start, end);
 
       writer.setSelection(range);
@@ -197,27 +204,44 @@ const Editor: FunctionComponent<Props> = ({ onUpdateMetrics, highlight }) => {
     setNodeSelection();
   }, [highlight]);
 
-  const highlightNode = (localEditor, writer, node, color: string, startPos: number|string = 0, startEnd: number|string = 'end') => {
+  const highlightNode = (
+    localEditor,
+    writer,
+    node,
+    color: string,
+    startPos: number | string = 0,
+    startEnd: number | string = "end"
+  ) => {
     const start = writer.createPositionAt(node, startPos);
     const end = writer.createPositionAt(node, startEnd);
 
     writer.setSelection(writer.createRange(start, end));
 
-    localEditor.execute('highlight', {
+    localEditor.execute("highlight", {
       value: `${color}Marker`,
     });
   };
 
-  const removeHighlight = (localEditor, writer, node, startPos: number|string = 0, startEnd: number|string = 'end') => {
+  const removeHighlight = (
+    localEditor,
+    writer,
+    node,
+    startPos: number | string = 0,
+    startEnd: number | string = "end"
+  ) => {
     const start = writer.createPositionAt(node, startPos);
     const end = writer.createPositionAt(node, startEnd);
 
     writer.setSelection(writer.createRange(start, end));
 
-    localEditor.execute('highlight');
+    localEditor.execute("highlight");
   };
 
-  const applyHighlight = (localEditor, localWriter, providedIndex: number|null = null) => {
+  const applyHighlight = (
+    localEditor,
+    localWriter,
+    providedIndex: number | null = null
+  ) => {
     const root = localEditor.model.document.getRoot();
     const currentPosition = localEditor.model.document.selection.getFirstPosition();
 
@@ -230,8 +254,11 @@ const Editor: FunctionComponent<Props> = ({ onUpdateMetrics, highlight }) => {
         break;
       }
 
-      const text = [...child?.getChildren()].reduce((acc, item) => acc + item.data, '');
-      const words = wordTokenizer.tokenize(text ?? '');
+      const text = [...child?.getChildren()].reduce(
+        (acc, item) => acc + item.data,
+        ""
+      );
+      const words = wordTokenizer.tokenize(text ?? "");
 
       words.forEach((word, i) => {
         const wordScore = analyzer.getSentiment([word]) ?? 0;
@@ -243,9 +270,16 @@ const Editor: FunctionComponent<Props> = ({ onUpdateMetrics, highlight }) => {
           removeHighlight(localEditor, localWriter, child, start, end);
           return;
         }
-  
+
         // Apply color
-        highlightNode(localEditor, localWriter, child, wordScore < 0 ? 'pink' : 'green', start, end);
+        highlightNode(
+          localEditor,
+          localWriter,
+          child,
+          wordScore < 0 ? "pink" : "green",
+          start,
+          end
+        );
       });
 
       index += 1;
@@ -256,13 +290,13 @@ const Editor: FunctionComponent<Props> = ({ onUpdateMetrics, highlight }) => {
     }
 
     // Re-apply current cursor position
-    localWriter.setSelection(currentPosition, 'end');
+    localWriter.setSelection(currentPosition, "end");
   };
 
   const applyHighlightToAll = () => {
     // On change will be triggered
     setPasteDate(new Date());
-  }
+  };
 
   const onChange = (_event, localEditor) => {
     localEditor.model.change((writer) => {
@@ -277,7 +311,7 @@ const Editor: FunctionComponent<Props> = ({ onUpdateMetrics, highlight }) => {
 
       const currentPos = localEditor.model.document.selection.getFirstPosition();
 
-      applyHighlight(localEditor, writer, currentPos.path[0])
+      applyHighlight(localEditor, writer, currentPos.path[0]);
     });
 
     const data = editor.getData();
@@ -291,7 +325,7 @@ const Editor: FunctionComponent<Props> = ({ onUpdateMetrics, highlight }) => {
     }
 
     if (editor && !ready) {
-      editor.editing.view.document.on('clipboardInput', applyHighlightToAll);
+      editor.editing.view.document.on("clipboardInput", applyHighlightToAll);
     }
   }, [editor]);
 
@@ -302,8 +336,8 @@ const Editor: FunctionComponent<Props> = ({ onUpdateMetrics, highlight }) => {
         onReady={(ed) => setEditor(ed)}
         config={{
           plugins: [Essentials, Bold, Italic, Paragraph, Heading, Highlight],
-          toolbar: ['heading', '|', 'bold', 'italic'],
-          placeholder: 'Write your text',
+          toolbar: ["heading", "|", "bold", "italic"],
+          placeholder: "Write your text",
         }}
         data={content}
         onChange={onChange}
