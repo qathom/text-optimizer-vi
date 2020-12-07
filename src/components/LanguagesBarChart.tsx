@@ -15,6 +15,8 @@ const colors = [
 ];
 
 function getChartData(data: Map<string, number[]>) {
+    console.log('data');
+    console.log(data);
   // 1 dataset per language
   const keys = [...data.keys()];
   const datasets: Chart.ChartDataSets[] = [];
@@ -32,7 +34,6 @@ function getChartData(data: Map<string, number[]>) {
 
   return {
     datasets,
-    // labels: [...data.values()].map((_value, i) => `Paragraphe ${i}`),
     labels: (data.get('eng')??[]).map((value, idx) => `Paragraph ${idx}`)
   };
 }

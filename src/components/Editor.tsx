@@ -1,6 +1,5 @@
 import React, { FunctionComponent, useEffect, useState } from 'react';
 import { Form } from 'react-bootstrap';
-import natural from 'natural';
 import { CKEditor } from '@ckeditor/ckeditor5-react';
 import ClassicEditor from '@ckeditor/ckeditor5-editor-classic/src/classiceditor';
 import Essentials from '@ckeditor/ckeditor5-essentials/src/essentials';
@@ -15,10 +14,12 @@ import { Metrics } from '../../types';
 import round from '../utils/round';
 import isTextNeutral from '../utils/text';
 
+const natural = require('natural');
+
 const Analyzer = natural.SentimentAnalyzer;
 const stemmer = natural.PorterStemmer;
 const wordTokenizer = new natural.WordTokenizer();
-const sentenceTokenizer = new natural.TreebankWordTokenizer();
+const sentenceTokenizer = new natural.SentenceTokenizer();
 const analyzer = new Analyzer('English', stemmer, 'afinn');
 
 type Props = {
@@ -73,11 +74,11 @@ const Editor: FunctionComponent<Props> = ({ onUpdateMetrics, highlight }) => {
     ]);
 
     paragraphTokens.forEach((paragraph) => {
-      [...languages.keys()].forEach((key) => {
-        languages.set(key, [0]);
-      });
-
       // sentenceTokens.For each sentence
+      let t = languages.get("eng")?.push(0);
+      t = languages.get("deu")?.push(0);
+      t = languages.get("fra")?.push(0);
+      t = languages.get("ita")?.push(0);
       const sentences: string[] = sentenceTokenizer.tokenize(paragraph);
       let consirederSentencesNumber = sentences.length;
 
@@ -121,8 +122,10 @@ const Editor: FunctionComponent<Props> = ({ onUpdateMetrics, highlight }) => {
       countWords: wordTokens.length,
       varianceScore: round(variance),
       sentiments,
-      neutralityScore: round(sentiments.reduce((acc, sentiment) => acc + sentiment, 0) / sentiments.length ?? 0),
-      languages, // TODO  alex
+      neutralityScore:
+        round(sentiments.reduce((acc, sentiment) => acc + sentiment, 0) /
+        sentiments.length),
+      languages,
     });
   };
 
