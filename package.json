@@ -1,6 +1,6 @@
 {
   "name": "text-optimizer-vi",
-  "version": "0.1.6",
+  "version": "0.1.7",
   "private": true,
   "homepage": "https://qathom.github.io/text-optimizer-vi",
   "scripts": {
@@ -34,7 +34,6 @@
     "@testing-library/user-event": "^7.2.1",
     "@types/jest": "^24.9.1",
     "@types/natural": "^2.1.0",
-    "@types/node": "^12.19.1",
     "@types/react": "^16.9.53",
     "@types/react-dom": "^16.9.8",
     "bootstrap": "^4.5.3",

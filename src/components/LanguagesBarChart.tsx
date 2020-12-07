@@ -60,7 +60,7 @@ const LanguagesBarChart: FunctionComponent<Props> = ({ data }) => {
                },
               scaleLabel: {
                 display: true,
-                labelString: 'Score du sentiment',
+                labelString: 'Sentiment score',
               },
             }],
             xAxes: [{
