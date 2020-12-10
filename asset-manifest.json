@@ -1,0 +1,25 @@
+{
+  "files": {
+    "main.css": "/text-optimizer-vi/static/css/main.0f56bae9.chunk.css",
+    "main.js": "/text-optimizer-vi/static/js/main.8aa866e7.chunk.js",
+    "main.js.map": "/text-optimizer-vi/static/js/main.8aa866e7.chunk.js.map",
+    "runtime-main.js": "/text-optimizer-vi/static/js/runtime-main.d40a95cb.js",
+    "runtime-main.js.map": "/text-optimizer-vi/static/js/runtime-main.d40a95cb.js.map",
+    "static/css/2.29237bf3.chunk.css": "/text-optimizer-vi/static/css/2.29237bf3.chunk.css",
+    "static/js/2.872a3904.chunk.js": "/text-optimizer-vi/static/js/2.872a3904.chunk.js",
+    "static/js/2.872a3904.chunk.js.map": "/text-optimizer-vi/static/js/2.872a3904.chunk.js.map",
+    "index.html": "/text-optimizer-vi/index.html",
+    "precache-manifest.95b37c522827e7cc314e9dcdcf93c82d.js": "/text-optimizer-vi/precache-manifest.95b37c522827e7cc314e9dcdcf93c82d.js",
+    "service-worker.js": "/text-optimizer-vi/service-worker.js",
+    "static/css/2.29237bf3.chunk.css.map": "/text-optimizer-vi/static/css/2.29237bf3.chunk.css.map",
+    "static/css/main.0f56bae9.chunk.css.map": "/text-optimizer-vi/static/css/main.0f56bae9.chunk.css.map",
+    "static/js/2.872a3904.chunk.js.LICENSE.txt": "/text-optimizer-vi/static/js/2.872a3904.chunk.js.LICENSE.txt"
+  },
+  "entrypoints": [
+    "static/js/runtime-main.d40a95cb.js",
+    "static/css/2.29237bf3.chunk.css",
+    "static/js/2.872a3904.chunk.js",
+    "static/css/main.0f56bae9.chunk.css",
+    "static/js/main.8aa866e7.chunk.js"
+  ]
+}
