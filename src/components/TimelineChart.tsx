@@ -69,9 +69,7 @@ const TimelineChart: FunctionComponent<Props> = ({ data, onLabelClicked, colorBl
             yAxes: [{
               display: true,
               ticks: {
-               // min: -1,
-               //  max: 1,
-                 maxTicksLimit: 5,
+                maxTicksLimit: 5,
               },
               scaleLabel: {
                 display: true,
