@@ -8,16 +8,14 @@ type Props = {
 };
 
 const colors = [
-  '#1abc9c',
-  '#3498db',
+  '#ef5350',
+  '#333',
   '#9b59b6',
-  '#e67e22',
-  '#e74c3c',
+  '#80cbc4',
+  '#90caf9',
 ];
 
 function getChartData(data: Map<string, number[]>) {
-    console.log('data');
-    console.log(data);
   // 1 dataset per language
   const keys = [...data.keys()];
   const datasets: Chart.ChartDataSets[] = [];
@@ -35,7 +33,7 @@ function getChartData(data: Map<string, number[]>) {
 
   return {
     datasets,
-    labels: (data.get('eng')??[]).map((value, idx) => `Paragraph ${idx}`)
+    labels: (data.get('eng')??[]).map((value, idx) => `${idx + 1}`)
   };
 }
 
@@ -66,10 +64,8 @@ const LanguagesBarChart: FunctionComponent<Props> = ({ data, onBarClicked }) => 
               stacked: true,
               display: true,
               ticks: {
-                // min: -1,
-                //  max: 1,
-                  maxTicksLimit: 5,
-               },
+                maxTicksLimit: 5,
+              },
               scaleLabel: {
                 display: true,
                 labelString: 'Sentiment score',
